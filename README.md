@@ -1,0 +1,2 @@
+# dingo
+Data in Go
