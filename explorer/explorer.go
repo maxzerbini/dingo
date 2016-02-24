@@ -28,12 +28,14 @@ func readTables(conn *sql.DB, schema *model.DatabaseSchema) {
 		log.Fatal(err)
 	}
 	for rows.Next() {
-		table := model.Table{}
+		table := &model.Table{}
 		err := rows.Scan(&table.TableName)
 		if err != nil {
 			log.Fatal(err)
 		}
 		schema.Tables = append(schema.Tables, table)
+		log.Printf("Examining table %s\r\n", table.TableName)
+		readColums(conn, schema, table.TableName, &table.Columns)
 	}
 }
 
@@ -44,15 +46,48 @@ func readViews(conn *sql.DB, schema *model.DatabaseSchema) {
 		log.Fatal(err)
 	}
 	for rows.Next() {
-		view := model.View{}
+		view := &model.View{}
 		err := rows.Scan(&view.ViewName)
 		if err != nil {
 			log.Fatal(err)
 		}
 		schema.Views = append(schema.Views, view)
+		log.Printf("Examining view %s\r\n", view.ViewName)
+		readColums(conn, schema, view.ViewName, &view.Columns)
 	}
 }
 
-func readColums(conn *sql.DB, schema *model.DatabaseSchema, tableName string, colums *[]model.Column) {
-
+func readColums(conn *sql.DB, schema *model.DatabaseSchema, tableName string, colums *[]*model.Column) {
+	q := "SELECT TABLE_NAME, COLUMN_NAME, IS_NULLABLE, DATA_TYPE, CHARACTER_MAXIMUM_LENGTH, NUMERIC_PRECISION, NUMERIC_SCALE, COLUMN_TYPE, COLUMN_KEY, EXTRA"
+	q += " FROM information_schema.COLUMNS "
+	q += " WHERE TABLE_SCHEMA=? AND TABLE_NAME=? ORDER BY ORDINAL_POSITION"
+	rows, err := conn.Query(q, schema.SchemaName, tableName)
+	if err != nil {
+		log.Fatal(err)
+	}
+	for rows.Next() {
+		column := &model.Column{}
+		nullable := "NO"
+		columnKey, extra := "", ""
+		err := rows.Scan(&column.ColumnName, &column.ColumnName, &nullable, &column.DataType, &column.CharacterMaximumLength, &column.NumericPrecision, &column.NumericScale, &column.ColumnType, &columnKey, &extra)
+		if err != nil {
+			log.Fatal(err)
+		}
+		//log.Printf("Examining column %s\r\n", column.ColumnName)
+		if "NO" == nullable {
+			column.IsNullable = false
+		} else {
+			column.IsNullable = true
+		}
+		if "PRI" == columnKey {
+			column.IsPrimaryKey = true
+		}
+		if "UNI" == columnKey {
+			column.IsUnique = true
+		}
+		if "auto_increment" == extra {
+			column.IsAutoIncrement = true
+		}
+		*colums = append(*colums, column)
+	}
 }

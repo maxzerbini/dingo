@@ -2,11 +2,17 @@ package main
 
 import (
 	"flag"
+	"log"
 	"runtime"
 	"runtime/debug"
+
+	"github.com/maxzerbini/dingo/explorer"
+	"github.com/maxzerbini/dingo/generators"
+	"github.com/maxzerbini/dingo/model"
+	"github.com/maxzerbini/dingo/producers"
 )
 
-var configPath string
+var configPath string = "./config.json"
 
 func init() {
 	runtime.GOMAXPROCS(runtime.NumCPU())
@@ -14,21 +20,12 @@ func init() {
 	flag.StringVar(&configPath, "conf", "./config.json", "path of the file config.json")
 }
 
-/*
-
-SELECT * FROM `information_schema`.`TABLES` Where TABLE_SCHEMA='Customers';
-SELECT * FROM `information_schema`.`VIEWS` Where TABLE_SCHEMA='Customers';
-
-SELECT * FROM `information_schema`.`COLUMNS` Where TABLE_SCHEMA='Customers' AND TABLE_NAME='Customer';
-
-SELECT * FROM `information_schema`.`KEY_COLUMN_USAGE` Where TABLE_SCHEMA='Customers' AND TABLE_NAME='Customer' AND CONSTRAINT_NAME='PRIMARY';
-
-SELECT C.TABLE_NAME, C.COLUMN_NAME, C.IS_NULLABLE, C.DATA_TYPE, C.CHARACTER_MAXIMUM_LENGTH, C.NUMERIC_PRECISION, C.NUMERIC_SCALE, C.COLUMN_TYPE, C.COLUMN_KEY
-FROM information_schema.COLUMNS C WHERE C.TABLE_SCHEMA = 'Messages' ORDER BY TABLE_NAME, C.ORDINAL_POSITION;
-
-*/
-
 // Start the code generator
 func main() {
-
+	log.Printf("DinGo Code Generator\r\n")
+	config := model.LoadConfiguration(configPath)
+	schema := explorer.ExploreSchema(&config)
+	pkg := producers.ProduceModelPackage(&config, schema)
+	generators.GenerateModel(&config, pkg)
+	log.Printf("Code generation done.\r\n")
 }

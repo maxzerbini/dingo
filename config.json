@@ -1,0 +1,8 @@
+{
+	"Hostname": "localhost", 
+	"Port": "3306", 
+	"DatabaseName": "Customers", 
+	"Username": "zerbo", 
+	"Password": "Mysql.2016",
+	"OutputPath": "$GOPATH/src/github.com/maxzerbini/prjtest"
+}
