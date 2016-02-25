@@ -9,9 +9,9 @@ import (
 )
 
 func ProduceModelPackage(config *model.Configuration, schema *model.DatabaseSchema) (pkg *model.ModelPackage) {
-	pkg = &model.ModelPackage{PackageName: "model"}
+	pkg = &model.ModelPackage{PackageName: "model", BasePackage: config.BasePackage}
 	for _, table := range schema.Tables {
-		mt := &model.ModelType{TypeName: getModelTypeName(table.TableName)}
+		mt := &model.ModelType{TypeName: getModelTypeName(table.TableName), PackageName: "model"}
 		pkg.ModelTypes = append(pkg.ModelTypes, mt)
 		for _, column := range table.Columns {
 			field := &model.ModelField{FieldName: getModelFieldName(column.ColumnName), FieldType: getModelFieldType(pkg, column), FieldMetadata: getFieldMetadata(pkg, column)}

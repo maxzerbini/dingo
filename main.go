@@ -25,7 +25,9 @@ func main() {
 	log.Printf("DinGo Code Generator\r\n")
 	config := model.LoadConfiguration(configPath)
 	schema := explorer.ExploreSchema(&config)
-	pkg := producers.ProduceModelPackage(&config, schema)
-	generators.GenerateModel(&config, pkg)
+	modelpkg := producers.ProduceModelPackage(&config, schema)
+	daopkg := producers.ProduceDaoPackage(&config, schema, modelpkg)
+	generators.GenerateModel(&config, modelpkg)
+	generators.GenerateDao(&config, daopkg)
 	log.Printf("Code generation done.\r\n")
 }

@@ -24,12 +24,14 @@ func init() {
 		}
 	}
 	config.OutputPath = testProjectPath
+	config.BasePackage = "github.com/maxzerbini/prjtest"
 }
 
-func TestModelGeneration(t *testing.T) {
+func TestGeneration(t *testing.T) {
 	t.Log("TestGenerateModel started")
 	schema := explorer.ExploreSchema(config)
-	pkg := producers.ProduceModelPackage(config, schema)
-	t.Logf("%v", pkg)
-	generators.GenerateModel(config, pkg)
+	modelpkg := producers.ProduceModelPackage(config, schema)
+	daopkg := producers.ProduceDaoPackage(config, schema, modelpkg)
+	generators.GenerateModel(config, modelpkg)
+	generators.GenerateDao(config, daopkg)
 }

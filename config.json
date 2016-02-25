@@ -4,5 +4,6 @@
 	"DatabaseName": "Customers", 
 	"Username": "zerbo", 
 	"Password": "Mysql.2016",
+	"BasePackage": "github.com/maxzerbini/prjtest",
 	"OutputPath": "$GOPATH/src/github.com/maxzerbini/prjtest"
 }

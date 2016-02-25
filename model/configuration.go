@@ -14,6 +14,7 @@ type Configuration struct {
 	DatabaseName string
 	Username     string
 	Password     string
+	BasePackage  string
 	OutputPath   string
 }
 
@@ -30,5 +31,7 @@ func LoadConfiguration(path string) Configuration {
 
 func correctOutputPath(path string) string {
 	gopath := os.Getenv("GOPATH")
-	return strings.Replace(path, "$GOPATH", gopath, -1)
+	path = strings.Replace(path, "$GOPATH", gopath, -1)
+	path = strings.Replace(path, "%GOPATH%", gopath, -1)
+	return path
 }
