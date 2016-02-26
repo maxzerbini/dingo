@@ -15,6 +15,12 @@ func ProduceModelPackage(config *model.Configuration, schema *model.DatabaseSche
 		pkg.ModelTypes = append(pkg.ModelTypes, mt)
 		for _, column := range table.Columns {
 			field := &model.ModelField{FieldName: getModelFieldName(column.ColumnName), FieldType: getModelFieldType(pkg, column), FieldMetadata: getFieldMetadata(pkg, column)}
+			if column.IsPrimaryKey {
+				field.IsPK = true
+			}
+			if column.IsAutoIncrement {
+				field.IsAutoInc = true
+			}
 			mt.Fields = append(mt.Fields, field)
 		}
 	}

@@ -9,7 +9,7 @@ import (
 )
 
 func ExploreSchema(config *model.Configuration) (schema *model.DatabaseSchema) {
-	conn, err := sql.Open("mysql", config.Username+":"+config.Password+"@tcp("+config.Hostname+":"+config.Port+")/information_schema")
+	conn, err := sql.Open("mysql", config.Username+":"+config.Password+"@tcp("+config.Hostname+":"+config.Port+")/information_schema?parseTime=true")
 	if err != nil {
 		log.Fatal(err)
 	}

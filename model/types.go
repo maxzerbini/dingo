@@ -1,9 +1,16 @@
 package model
 
+type BaseField struct {
+	FieldName string
+	FieldType string
+}
+
 type ModelField struct {
 	FieldName     string
 	FieldType     string
 	FieldMetadata string
+	IsPK          bool
+	IsAutoInc     bool
 }
 
 type ModelType struct {
@@ -15,7 +22,7 @@ type ModelType struct {
 type DaoType struct {
 	PackageName string
 	TypeName    string
-	Fields      []*ModelField
+	Fields      []*BaseField
 	Model       *ModelType
 	Entity      *Table
 }
