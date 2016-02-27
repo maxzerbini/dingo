@@ -43,7 +43,13 @@ type CustomerDao struct {
 }
 // Insert a new Customer entity and returns the last insert Id.
 func (dao *CustomerDao) Insert(conn *sql.DB, dto *model.Customer)(lastInsertId int64, err error){
-	...
+	q := "INSERT INTO customer VALUES (?, ?, ?, ?, ?)"
+	res, err := conn.Exec(q, sql.NullInt64{}, dto.Name, dto.State, dto.CreationDate, dto.UpdateDate)
+    if err != nil {
+		return -1, err
+	}
+	lastInsertId, err = res.LastInsertId()
+	return lastInsertId, err
 }
 // Update a Customer entity and returns the number of affected rows.
 func (dao *CustomerDao) Update(conn *sql.DB, dto *model.Customer)(rowsAffected int64, err error){
