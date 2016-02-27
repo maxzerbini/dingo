@@ -103,6 +103,7 @@ $ dingo -conf=/mypath/myconfig.json
 ## Known issues
 - The DAO components are produced correctly if the tables have a PK
 - Some columns types that are not recognized (such as JSON) are mapped to string fields
+- DinGo maps DATE, TIME, DATETIME and TIMESTAMP column types to *time.Time* assuming that the connection has opened using the DSN parameter *parseTime=true*
 
 ## Warning
 It's recommended to test the generated code before use in production.
