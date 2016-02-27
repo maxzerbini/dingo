@@ -77,3 +77,27 @@ func (dao *{{.TypeName}}) List(conn *sql.DB, take int32, skip int32) (list []*{{
 	return list, nil
 }
 {{end}}
+{{range .ViewDaoTypes}}
+// Data access object for {{.Model.TypeName}} entities.
+type {{.TypeName}} struct {
+	{{range .Fields}}{{.FieldName}} {{.FieldType}} `{{.FieldMetadata}}`
+	{{end}}
+}
+// List the {{.Model.TypeName}} entities.
+func (dao *{{.TypeName}}) List(conn *sql.DB, take int32, skip int32) (list []*{{.Model.PackageName}}.{{.Model.TypeName}}, err error){
+	q := "SELECT {{range $i, $e := .View.Columns}}{{if $i}}, {{end}}{{.ColumnName}}{{end}} FROM {{.View.ViewName}} LIMIT ? OFFSET ?"
+	rows, err := conn.Query(q, take, skip)
+	if err != nil {
+		return nil, err
+	}
+	for rows.Next() {
+		dto := &{{.Model.PackageName}}.{{.Model.TypeName}}{}
+		err := rows.Scan({{range $i, $e := .Model.Fields}}{{if $i}}, {{end}}&dto.{{.FieldName}}{{end}})
+		if err != nil {
+			return nil, err
+		}
+		list = append(list, dto)
+	}
+	return list, nil
+}
+{{end}}

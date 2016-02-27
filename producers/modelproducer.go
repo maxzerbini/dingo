@@ -27,6 +27,14 @@ func ProduceModelPackage(config *model.Configuration, schema *model.DatabaseSche
 			mt.Fields = append(mt.Fields, field)
 		}
 	}
+	for _, view := range schema.Views {
+		mt := &model.ModelType{TypeName: getModelTypeName(view.ViewName), PackageName: "model"}
+		pkg.ViewModelTypes = append(pkg.ViewModelTypes, mt)
+		for _, column := range view.Columns {
+			field := &model.ModelField{FieldName: getModelFieldName(column.ColumnName), FieldType: getModelFieldType(pkg, column), FieldMetadata: getFieldMetadata(pkg, column)}
+			mt.Fields = append(mt.Fields, field)
+		}
+	}
 	return pkg
 }
 

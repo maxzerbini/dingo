@@ -27,6 +27,7 @@ type DaoType struct {
 	Fields      []*BaseField
 	Model       *ModelType
 	Entity      *Table
+	View        *View
 }
 
 type ModelPackage struct {
@@ -34,6 +35,7 @@ type ModelPackage struct {
 	PackageName    string
 	ImportPackages []string
 	ModelTypes     []*ModelType
+	ViewModelTypes []*ModelType
 }
 
 type DaoPackage struct {
@@ -41,6 +43,7 @@ type DaoPackage struct {
 	PackageName    string
 	ImportPackages []string
 	DaoTypes       []*DaoType
+	ViewDaoTypes   []*DaoType
 }
 
 func (pkg *ModelPackage) HasImports() bool {

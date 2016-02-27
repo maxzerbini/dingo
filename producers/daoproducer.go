@@ -16,5 +16,13 @@ func ProduceDaoPackage(config *model.Configuration, schema *model.DatabaseSchema
 		pkg.DaoTypes = append(pkg.DaoTypes, dao)
 		i++
 	}
+	i = 0
+	for _, view := range schema.Views {
+		dao := &model.DaoType{TypeName: mpkg.ViewModelTypes[i].TypeName + "Dao", PackageName: "dao"}
+		dao.Model = mpkg.ModelTypes[i]
+		dao.View = view
+		pkg.ViewDaoTypes = append(pkg.ViewDaoTypes, dao)
+		i++
+	}
 	return pkg
 }
