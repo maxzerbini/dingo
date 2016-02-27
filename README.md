@@ -93,3 +93,10 @@ If you rename or move the configuration file then run
 ```bash
 $ dingo -conf=/mypath/myconfig.json
 ```
+
+## Known issues
+- The DAO components are produced correctly if the tables have a PK
+- Some columns types that are not recognized (such as JSON) are mapped to string fields
+
+## Warning
+It's recommended to test the generated code before use in production.
