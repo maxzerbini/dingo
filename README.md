@@ -31,6 +31,7 @@ Every DAO defines these methods to perform CRUD operations on entities:
 - Delete(conn *sql.DB, dto *model.ModelStruct)(rowsAffected int64, err error)
 - FindByPrimaryKey(conn *sql.DB, pk1 pk1Type, pk2 pk2Type, ...) (dto *model.ModelStruct, err error)
 - List(conn *sql.DB, take int32, skip int32) (list []*model.ModelStruct, err error)
+- Count(conn *sql.DB)
 
 Generated DAO supports table's primary keys and auto-increment columns.
 All the DAO generated structs are written in the *dao.go* file inside the *dao* package's directory.
@@ -64,14 +65,7 @@ func (dao *CustomerDao) Update(conn *sql.DB, dto *model.Customer)(rowsAffected i
 }
 // Delete a Customer entity and returns the number of affected rows.
 func (dao *CustomerDao) Delete(conn *sql.DB, dto *model.Customer)(rowsAffected int64, err error){
-	q := "DELETE FROM customer"
-	q += " WHERE Id = ?"
-	res, err := conn.Exec(q, dto.Id)
-    if err != nil {
-		return -1, err
-	}
-	rowsAffected, err = res.RowsAffected()
-	return rowsAffected, err
+	...
 }
 // Find the Customer entity by primary keys, returns nil if not found.
 func (dao *CustomerDao) FindByPrimaryKey(conn *sql.DB, Id int64) (dto *model.Customer, err error){
@@ -79,6 +73,9 @@ func (dao *CustomerDao) FindByPrimaryKey(conn *sql.DB, Id int64) (dto *model.Cus
 }
 // List the Customer entities.
 func (dao *CustomerDao) List(conn *sql.DB, take int32, skip int32) (list []*model.Customer, err error){
+	...
+}
+func (dao *CustomerDao) Count(conn *sql.DB) (count int64, err error){
 	...
 }
 ```
