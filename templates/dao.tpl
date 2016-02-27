@@ -2,6 +2,7 @@ package {{.PackageName}}
 {{if .HasImports}}
 {{range .ImportPackages}}import "{{.}}"
 {{end}}{{end}}
+import "errors"
 {{range .DaoTypes}}
 // Data access object for {{.Model.TypeName}} entities.
 type {{.TypeName}} struct {
@@ -55,7 +56,7 @@ func (dao *{{.TypeName}}) FindByPrimaryKey(conn *sql.DB, {{range $i, $e := .Mode
 		}
 		return dto, nil
 	} else {
-		return nil, nil
+		return nil, errors.New("Not found.")
 	}
 	
 }

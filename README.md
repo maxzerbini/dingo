@@ -53,11 +53,25 @@ func (dao *CustomerDao) Insert(conn *sql.DB, dto *model.Customer)(lastInsertId i
 }
 // Update a Customer entity and returns the number of affected rows.
 func (dao *CustomerDao) Update(conn *sql.DB, dto *model.Customer)(rowsAffected int64, err error){
-	...
+	q := "UPDATE customer SET Name=?, State=?, CreationDate=?, UpdateDate=?"
+	q += " WHERE Id = ?"
+	res, err := conn.Exec(q, dto.Name, dto.State, dto.CreationDate, dto.UpdateDate, dto.Id)
+    if err != nil {
+		return -1, err
+	}
+	rowsAffected, err = res.RowsAffected()
+	return rowsAffected, err
 }
 // Delete a Customer entity and returns the number of affected rows.
 func (dao *CustomerDao) Delete(conn *sql.DB, dto *model.Customer)(rowsAffected int64, err error){
-	...
+	q := "DELETE FROM customer"
+	q += " WHERE Id = ?"
+	res, err := conn.Exec(q, dto.Id)
+    if err != nil {
+		return -1, err
+	}
+	rowsAffected, err = res.RowsAffected()
+	return rowsAffected, err
 }
 // Find the Customer entity by primary keys, returns nil if not found.
 func (dao *CustomerDao) FindByPrimaryKey(conn *sql.DB, Id int64) (dto *model.Customer, err error){
@@ -106,4 +120,4 @@ $ dingo -conf=/mypath/myconfig.json
 - DinGo maps DATE, TIME, DATETIME and TIMESTAMP column types to *time.Time* assuming that the connection has opened using the DSN parameter *parseTime=true*
 
 ## Warning
-It's recommended to test the generated code before use in production.
+It's recommended to test the generated code before using it in production.
