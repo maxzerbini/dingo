@@ -58,7 +58,6 @@ func (dao *{{.TypeName}}) FindByPrimaryKey(conn *sql.DB, {{range $i, $e := .Mode
 	} else {
 		return nil, errors.New("Not found.")
 	}
-	
 }
 // List the {{.Model.TypeName}} entities.
 func (dao *{{.TypeName}}) List(conn *sql.DB, take int32, skip int32) (list []*{{.Model.PackageName}}.{{.Model.TypeName}}, err error){
@@ -77,6 +76,23 @@ func (dao *{{.TypeName}}) List(conn *sql.DB, take int32, skip int32) (list []*{{
 	}
 	return list, nil
 }
+// Count the {{.Model.TypeName}} entities.
+func (dao *{{.TypeName}}) Count(conn *sql.DB) (count int64, err error){
+	q := "SELECT count(*) FROM {{.Entity.TableName}}"
+	rows, err := conn.Query(q)
+	if err != nil {
+		return 0, err
+	}
+	if rows.Next() {
+		err := rows.Scan(&count)
+		if err != nil {
+			return 0, err
+		}
+		return count, nil
+	} else {
+		return 0, nil
+	}
+}
 {{end}}
 {{range .ViewDaoTypes}}
 // Data access object for {{.Model.TypeName}} entities.
@@ -84,7 +100,7 @@ type {{.TypeName}} struct {
 	{{range .Fields}}{{.FieldName}} {{.FieldType}} `{{.FieldMetadata}}`
 	{{end}}
 }
-// List the {{.Model.TypeName}} entities.
+// List the {{.Model.TypeName}} entities in the view.
 func (dao *{{.TypeName}}) List(conn *sql.DB, take int32, skip int32) (list []*{{.Model.PackageName}}.{{.Model.TypeName}}, err error){
 	q := "SELECT {{range $i, $e := .View.Columns}}{{if $i}}, {{end}}{{.ColumnName}}{{end}} FROM {{.View.ViewName}} LIMIT ? OFFSET ?"
 	rows, err := conn.Query(q, take, skip)
@@ -100,5 +116,22 @@ func (dao *{{.TypeName}}) List(conn *sql.DB, take int32, skip int32) (list []*{{
 		list = append(list, dto)
 	}
 	return list, nil
+}
+// Count the {{.Model.TypeName}} entities in the view.
+func (dao *{{.TypeName}}) Count(conn *sql.DB) (count int64, err error){
+	q := "SELECT count(*) FROM {{.View.ViewName}}"
+	rows, err := conn.Query(q)
+	if err != nil {
+		return 0, err
+	}
+	if rows.Next() {
+		err := rows.Scan(&count)
+		if err != nil {
+			return 0, err
+		}
+		return count, nil
+	} else {
+		return 0, nil
+	}
 }
 {{end}}
