@@ -22,7 +22,7 @@ func ExploreSchema(config *model.Configuration) (schema *model.DatabaseSchema) {
 }
 
 func readTables(conn *sql.DB, schema *model.DatabaseSchema) {
-	q := "SELECT TABLE_NAME FROM information_schema.TABLES Where TABLE_SCHEMA=? ORDER BY TABLE_NAME"
+	q := "SELECT TABLE_NAME FROM information_schema.TABLES Where TABLE_SCHEMA=? AND TABLE_TYPE='BASE TABLE' ORDER BY TABLE_NAME"
 	rows, err := conn.Query(q, schema.SchemaName)
 	if err != nil {
 		log.Fatal(err)
@@ -36,6 +36,13 @@ func readTables(conn *sql.DB, schema *model.DatabaseSchema) {
 		schema.Tables = append(schema.Tables, table)
 		log.Printf("Examining table %s\r\n", table.TableName)
 		readColums(conn, schema, table.TableName, &table.Columns)
+		for _, col := range table.Columns {
+			if col.IsPrimaryKey {
+				table.PrimaryKeys = append(table.PrimaryKeys, col)
+			} else {
+				table.OtherColumns = append(table.OtherColumns, col)
+			}
+		}
 	}
 }
 

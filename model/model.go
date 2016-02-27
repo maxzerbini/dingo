@@ -11,8 +11,10 @@ type DatabaseSchema struct {
 }
 
 type Table struct {
-	TableName string
-	Columns   []*Column
+	TableName    string
+	Columns      []*Column
+	PrimaryKeys  []*Column
+	OtherColumns []*Column
 }
 
 type View struct {

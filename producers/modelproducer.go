@@ -17,6 +17,9 @@ func ProduceModelPackage(config *model.Configuration, schema *model.DatabaseSche
 			field := &model.ModelField{FieldName: getModelFieldName(column.ColumnName), FieldType: getModelFieldType(pkg, column), FieldMetadata: getFieldMetadata(pkg, column)}
 			if column.IsPrimaryKey {
 				field.IsPK = true
+				mt.PKFields = append(mt.PKFields, field)
+			} else {
+				mt.OtherFields = append(mt.OtherFields, field)
 			}
 			if column.IsAutoIncrement {
 				field.IsAutoInc = true

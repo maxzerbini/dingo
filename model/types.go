@@ -17,6 +17,8 @@ type ModelType struct {
 	PackageName string
 	TypeName    string
 	Fields      []*ModelField
+	PKFields    []*ModelField
+	OtherFields []*ModelField
 }
 
 type DaoType struct {
