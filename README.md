@@ -8,6 +8,7 @@ The project is under development.
 ## Model Generation
 DinGo generates Model Data Transfer Object (DTO) reading the MySql database schema.
 All the generated strutcs are written in the *model.go* file of the *model* package.
+
 This is an example of DTO:
 ```Go
 // Data transfer object for Customer
@@ -30,6 +31,7 @@ Every DAO defines these methods to perform CRUD operations on entities:
 - Delete(conn *sql.DB, dto *model.ModelStruct)(rowsAffected int64, err error)
 - FindByPrimaryKey(conn *sql.DB, pk1 pk1Type, pk2 pk2Type, ...) (dto *model.ModelStruct, err error)
 - List(conn *sql.DB, take int32, skip int32) (list []*model.ModelStruct, err error)
+
 All the generated structs are written in the *dao.go* file of the *dao* package.
 This is an example of DAO:
 ```Go
