@@ -79,6 +79,7 @@ func (dao *CustomerDao) Count(conn *sql.DB) (count int64, err error){
 	...
 }
 ```
+The last two methods are available also for Views.
 
 ## Configuration
 The MySQL connection and other configuration parameters are defined in the *config.json* file.
