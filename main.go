@@ -24,7 +24,7 @@ func init() {
 func main() {
 	flag.Parse()
 	log.Printf("DinGo Code Generator\r\n")
-	log.Printf("Examining configuration file %s\r\n", configPath)
+	log.Printf("Processing configuration file %s\r\n", configPath)
 	config := model.LoadConfiguration(configPath)
 	schema := explorer.ExploreSchema(&config)
 	modelpkg := producers.ProduceModelPackage(&config, schema)

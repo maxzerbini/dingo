@@ -16,12 +16,12 @@ func ExploreSchema(config *model.Configuration) (schema *model.DatabaseSchema) {
 	defer conn.Close()
 	schema = &model.DatabaseSchema{}
 	schema.SchemaName = config.DatabaseName
-	readTables(conn, schema)
-	readViews(conn, schema)
+	readTables(config, conn, schema)
+	readViews(config, conn, schema)
 	return schema
 }
 
-func readTables(conn *sql.DB, schema *model.DatabaseSchema) {
+func readTables(config *model.Configuration, conn *sql.DB, schema *model.DatabaseSchema) {
 	q := "SELECT TABLE_NAME FROM information_schema.TABLES Where TABLE_SCHEMA=? AND TABLE_TYPE='BASE TABLE' ORDER BY TABLE_NAME"
 	rows, err := conn.Query(q, schema.SchemaName)
 	if err != nil {
@@ -33,20 +33,24 @@ func readTables(conn *sql.DB, schema *model.DatabaseSchema) {
 		if err != nil {
 			log.Fatal(err)
 		}
-		schema.Tables = append(schema.Tables, table)
-		log.Printf("Examining table %s\r\n", table.TableName)
-		readColums(conn, schema, table.TableName, &table.Columns)
-		for _, col := range table.Columns {
-			if col.IsPrimaryKey {
-				table.PrimaryKeys = append(table.PrimaryKeys, col)
-			} else {
-				table.OtherColumns = append(table.OtherColumns, col)
+		if config.IsIncluded(table.TableName) && !config.IsExcluded(table.TableName) {
+			schema.Tables = append(schema.Tables, table)
+			log.Printf("Examining table %s\r\n", table.TableName)
+			readColums(conn, schema, table.TableName, &table.Columns)
+			for _, col := range table.Columns {
+				if col.IsPrimaryKey {
+					table.PrimaryKeys = append(table.PrimaryKeys, col)
+				} else {
+					table.OtherColumns = append(table.OtherColumns, col)
+				}
 			}
+		} else {
+			log.Printf("Table %s is excluded\r\n", table.TableName)
 		}
 	}
 }
 
-func readViews(conn *sql.DB, schema *model.DatabaseSchema) {
+func readViews(config *model.Configuration, conn *sql.DB, schema *model.DatabaseSchema) {
 	q := "SELECT TABLE_NAME FROM information_schema.VIEWS Where TABLE_SCHEMA=? ORDER BY TABLE_NAME"
 	rows, err := conn.Query(q, schema.SchemaName)
 	if err != nil {
@@ -58,9 +62,13 @@ func readViews(conn *sql.DB, schema *model.DatabaseSchema) {
 		if err != nil {
 			log.Fatal(err)
 		}
-		schema.Views = append(schema.Views, view)
-		log.Printf("Examining view %s\r\n", view.ViewName)
-		readColums(conn, schema, view.ViewName, &view.Columns)
+		if config.IsIncluded(view.ViewName) && !config.IsExcluded(view.ViewName) {
+			schema.Views = append(schema.Views, view)
+			log.Printf("Examining view %s\r\n", view.ViewName)
+			readColums(conn, schema, view.ViewName, &view.Columns)
+		} else {
+			log.Printf("View %s is excluded\r\n", view.ViewName)
+		}
 	}
 }
 

@@ -75,6 +75,7 @@ func (dao *CustomerDao) FindByPrimaryKey(conn *sql.DB, Id int64) (dto *model.Cus
 func (dao *CustomerDao) List(conn *sql.DB, take int32, skip int32) (list []*model.Customer, err error){
 	...
 }
+// Count the Customer entities.
 func (dao *CustomerDao) Count(conn *sql.DB) (count int64, err error){
 	...
 }
@@ -92,9 +93,14 @@ Here is a configuration example:
 	"Username": "zerbo", 
 	"Password": "Mysql.2016",
 	"BasePackage": "github.com/maxzerbini/prjtest",
-	"OutputPath": "$GOPATH/src/github.com/maxzerbini/prjtest"
+	"OutputPath": "$GOPATH/src/github.com/maxzerbini/prjtest",
+	"ExcludedEntities": [],
+	"Entities": []
 }
 ```
+These properties are optional:
+- ExcludedEntities, list or entities to exclude
+- Entities, list of entities to include, if the list is void all the entities are considered
 
 ## Building DinGo
 ```bash

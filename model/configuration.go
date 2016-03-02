@@ -9,13 +9,36 @@ import (
 )
 
 type Configuration struct {
-	Hostname     string
-	Port         string
-	DatabaseName string
-	Username     string
-	Password     string
-	BasePackage  string
-	OutputPath   string
+	Hostname         string
+	Port             string
+	DatabaseName     string
+	Username         string
+	Password         string
+	BasePackage      string
+	OutputPath       string
+	ExcludedEntities []string
+	Entities         []string
+}
+
+func (conf *Configuration) IsExcluded(name string) bool {
+	for _, entity := range conf.ExcludedEntities {
+		if entity == name {
+			return true
+		}
+	}
+	return false
+}
+
+func (conf *Configuration) IsIncluded(name string) bool {
+	if len(conf.Entities) == 0 {
+		return true
+	} // if the list is void then all entities are included
+	for _, entity := range conf.Entities {
+		if entity == name {
+			return true
+		}
+	}
+	return false
 }
 
 func LoadConfiguration(path string) Configuration {
