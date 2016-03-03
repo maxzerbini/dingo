@@ -3,7 +3,7 @@ package {{.PackageName}}
 {{range .ImportPackages}}import "{{.}}"
 {{end}}{{end}}
 {{range .BizTypes}}
-// Businness object for {{.Model.TypeName}} entities.
+// Business object for {{.Model.TypeName}} entities.
 type {{.TypeName}} struct {
 	{{range .Fields}}{{.FieldName}} {{.FieldType}}
 	{{end}}

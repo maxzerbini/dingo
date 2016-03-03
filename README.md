@@ -82,6 +82,83 @@ func (dao *CustomerDao) Count(conn *sql.DB) (count int64, err error){
 ```
 The last two methods are available also for Views.
 
+## View-Model Generation
+The View-Model objects are produced in a similar manner to those of the Model. 
+The difference between these structures is that the former do not depend on the sql package and are designed to be serialized in JSON.
+
+## Business Object Generation
+These objects are wrapper around DAO. Their interface differ from the DAO interface because of View-Model types present on the method signatures.
+This is an example of generated Biz object:
+```Go
+// Business object for Customer entities.
+type CustomerBiz struct {
+	Dao *dao.CustomerDao
+	
+}
+func NewCustomerBiz() *CustomerBiz {
+	return &CustomerBiz{ Dao:&dao.CustomerDao{} }
+}
+// Convert an model entity in a view-model
+func (b *CustomerBiz) ToViewModel(m *model.Customer) *viewmodel.Customer{
+	v := &viewmodel.Customer{}
+	v.Id = m.Id
+	v.Name = m.Name
+	v.State = m.State
+	v.CreationDate = m.CreationDate
+	v.UpdateDate = m.UpdateDate
+	
+	return v
+}
+// Convert a view-model in a model entity
+func (b *CustomerBiz) ToModel(v *viewmodel.Customer) *model.Customer{
+	m := &model.Customer{}
+	m.Id = v.Id
+	m.Name = v.Name
+	m.State = v.State
+	m.CreationDate = v.CreationDate
+	m.UpdateDate = v.UpdateDate
+	
+	return m
+}
+// Insert a new Customer entity and returns the last insert Id.
+func (b *CustomerBiz) Insert(v *viewmodel.Customer) (lastInsertId int64, err error) {
+	return b.Dao.Insert(dao.Connection, b.ToModel(v))
+}
+// Update a Customer entity and returns the number of affected rows.
+func (b *CustomerBiz) Update(v *viewmodel.Customer) (rowsAffected int64, err error) {
+	return b.Dao.Update(dao.Connection, b.ToModel(v))
+}
+// Delete a Customer entity and returns the number of affected rows.
+func (b *CustomerBiz) Delete(v *viewmodel.Customer) (rowsAffected int64, err error) {
+	return b.Dao.Delete(dao.Connection, b.ToModel(v))
+}
+// Find the Customer entity by primary keys, returns nil if not found.
+func (b *CustomerBiz) FindByPrimaryKey(Id int64) (v *viewmodel.Customer, err error){
+	m, err := b.Dao.FindByPrimaryKey(dao.Connection, Id)
+	if err != nil {
+		return nil, err
+	} else {
+		return b.ToViewModel(m), nil
+	}
+}
+// List the Customer entities.
+func (b *CustomerBiz) List(take int32, skip int32) (list []*viewmodel.Customer, err error) {
+	mlist, err := b.Dao.List(dao.Connection, take, skip)
+	if err != nil {
+		return nil, err
+	} else {
+		for _, m := range mlist {
+			list = append(list, b.ToViewModel(m))
+		}
+		return list, nil
+	}
+}
+// Count the Customer entities.
+func (b *CustomerBiz) Count() (count int64, err error){
+	return b.Dao.Count(dao.Connection)
+}
+```
+
 ## Configuration
 The MySQL connection and other configuration parameters are defined in the *config.json* file.
 Here is a configuration example:
@@ -93,7 +170,9 @@ Here is a configuration example:
 	"Username": "zerbo", 
 	"Password": "Mysql.2016",
 	"BasePackage": "github.com/maxzerbini/prjtest",
-	"OutputPath": "$GOPATH/src/github.com/maxzerbini/prjtest"
+	"OutputPath": "$GOPATH/src/github.com/maxzerbini/prjtest",
+	"ExcludedEntities": [],
+	"Entities": []
 }
 ```
 
