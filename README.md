@@ -92,9 +92,9 @@ This is an example of generated Biz object:
 ```Go
 // Business object for Customer entities.
 type CustomerBiz struct {
-	Dao *dao.CustomerDao
-	
+	Dao *dao.CustomerDao	
 }
+// Create a CustomerBiz
 func NewCustomerBiz() *CustomerBiz {
 	return &CustomerBiz{ Dao:&dao.CustomerDao{} }
 }
@@ -106,7 +106,6 @@ func (b *CustomerBiz) ToViewModel(m *model.Customer) *viewmodel.Customer{
 	v.State = m.State
 	v.CreationDate = m.CreationDate
 	v.UpdateDate = m.UpdateDate
-	
 	return v
 }
 // Convert a view-model in a model entity
@@ -117,7 +116,6 @@ func (b *CustomerBiz) ToModel(v *viewmodel.Customer) *model.Customer{
 	m.State = v.State
 	m.CreationDate = v.CreationDate
 	m.UpdateDate = v.UpdateDate
-	
 	return m
 }
 // Insert a new Customer entity and returns the last insert Id.

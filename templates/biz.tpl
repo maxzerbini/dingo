@@ -5,9 +5,9 @@ package {{.PackageName}}
 {{range .BizTypes}}
 // Business object for {{.Model.TypeName}} entities.
 type {{.TypeName}} struct {
-	{{range .Fields}}{{.FieldName}} {{.FieldType}}
-	{{end}}
+	{{range .Fields}}{{.FieldName}} {{.FieldType}}{{end}}
 }
+//Create a {{.TypeName}}
 func New{{.TypeName}}() *{{.TypeName}} {
 	return &{{.TypeName}}{ Dao:&{{.Dao.PackageName}}.{{.Dao.TypeName}}{} }
 }
