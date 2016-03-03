@@ -6,11 +6,19 @@ type BaseField struct {
 }
 
 type ModelField struct {
-	FieldName     string
-	FieldType     string
-	FieldMetadata string
-	IsPK          bool
-	IsAutoInc     bool
+	FieldName         string
+	FieldType         string
+	FieldMetadata     string
+	IsPK              bool
+	IsAutoInc         bool
+	IsNullable        bool
+	NullableFieldType string
+}
+
+type ViewModelField struct {
+	FieldName  string
+	FieldType  string
+	IsNullable bool
 }
 
 type ModelType struct {
@@ -30,6 +38,22 @@ type DaoType struct {
 	View        *View
 }
 
+type ViewModelType struct {
+	PackageName string
+	TypeName    string
+	Fields      []*ViewModelField
+}
+
+type BizType struct {
+	PackageName string
+	TypeName    string
+	Fields      []*BaseField
+	Model       *ModelType
+	ViewModel   *ViewModelType
+	Dao         *DaoType
+	IsReadOnly  bool
+}
+
 type ModelPackage struct {
 	BasePackage    string
 	PackageName    string
@@ -44,6 +68,29 @@ type DaoPackage struct {
 	ImportPackages []string
 	DaoTypes       []*DaoType
 	ViewDaoTypes   []*DaoType
+}
+
+type ViewModelPackage struct {
+	BasePackage    string
+	PackageName    string
+	ImportPackages []string
+	ViewModelTypes []*ViewModelType
+}
+
+type BizPackage struct {
+	BasePackage    string
+	PackageName    string
+	ImportPackages []string
+	BizTypes       []*BizType
+}
+
+func (pkg *ModelPackage) HasImport(impPkg string) bool {
+	for _, imp := range pkg.ImportPackages {
+		if imp == impPkg {
+			return true
+		}
+	}
+	return false
 }
 
 func (pkg *ModelPackage) HasImports() bool {
@@ -65,6 +112,34 @@ func (pkg *DaoPackage) HasImports() bool {
 }
 
 func (pkg *DaoPackage) AppendImport(pkgName string) bool {
+	for _, imp := range pkg.ImportPackages {
+		if imp == pkgName {
+			return false
+		}
+	}
+	pkg.ImportPackages = append(pkg.ImportPackages, pkgName)
+	return true
+}
+
+func (pkg *ViewModelPackage) HasImports() bool {
+	return len(pkg.ImportPackages) > 0
+}
+
+func (pkg *ViewModelPackage) AppendImport(pkgName string) bool {
+	for _, imp := range pkg.ImportPackages {
+		if imp == pkgName {
+			return false
+		}
+	}
+	pkg.ImportPackages = append(pkg.ImportPackages, pkgName)
+	return true
+}
+
+func (pkg *BizPackage) HasImports() bool {
+	return len(pkg.ImportPackages) > 0
+}
+
+func (pkg *BizPackage) AppendImport(pkgName string) bool {
 	for _, imp := range pkg.ImportPackages {
 		if imp == pkgName {
 			return false

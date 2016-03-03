@@ -29,7 +29,11 @@ func main() {
 	schema := explorer.ExploreSchema(&config)
 	modelpkg := producers.ProduceModelPackage(&config, schema)
 	daopkg := producers.ProduceDaoPackage(&config, schema, modelpkg)
+	viewmodelpkg := producers.ProduceViewModelPackage(&config, schema)
+	bizpkg := producers.ProduceBizPackage(&config, modelpkg, daopkg, viewmodelpkg)
 	generators.GenerateModel(&config, modelpkg)
 	generators.GenerateDao(&config, daopkg)
+	generators.GenerateViewModel(&config, viewmodelpkg)
+	generators.GenerateBiz(&config, bizpkg)
 	log.Printf("Code generation done.\r\n")
 }

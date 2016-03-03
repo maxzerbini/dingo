@@ -24,6 +24,12 @@ func ProduceModelPackage(config *model.Configuration, schema *model.DatabaseSche
 			if column.IsAutoIncrement {
 				field.IsAutoInc = true
 			}
+			if column.IsNullable {
+				if field.FieldType != "time.Time" { // exclude time fields
+					field.IsNullable = true
+					field.NullableFieldType = field.FieldType[8:] // scorporate sql.Null
+				}
+			}
 			mt.Fields = append(mt.Fields, field)
 		}
 	}
@@ -32,6 +38,11 @@ func ProduceModelPackage(config *model.Configuration, schema *model.DatabaseSche
 		pkg.ViewModelTypes = append(pkg.ViewModelTypes, mt)
 		for _, column := range view.Columns {
 			field := &model.ModelField{FieldName: getModelFieldName(column.ColumnName), FieldType: getModelFieldType(pkg, column), FieldMetadata: getFieldMetadata(pkg, column)}
+			if column.IsNullable {
+				if field.FieldType != "time.Time" { // exclude time fields
+					field.IsNullable = true
+				}
+			}
 			mt.Fields = append(mt.Fields, field)
 		}
 	}

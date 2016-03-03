@@ -93,14 +93,9 @@ Here is a configuration example:
 	"Username": "zerbo", 
 	"Password": "Mysql.2016",
 	"BasePackage": "github.com/maxzerbini/prjtest",
-	"OutputPath": "$GOPATH/src/github.com/maxzerbini/prjtest",
-	"ExcludedEntities": [],
-	"Entities": []
+	"OutputPath": "$GOPATH/src/github.com/maxzerbini/prjtest"
 }
 ```
-These properties are optional:
-- ExcludedEntities, list or entities to exclude
-- Entities, list of entities to include, if the list is void all the entities are considered
 
 ## Building DinGo
 ```bash

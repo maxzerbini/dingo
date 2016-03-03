@@ -14,12 +14,23 @@ func init() {
 }
 
 func TestProduceModelPackage(t *testing.T) {
-	t.Log("TestGenerateModel started")
+	t.Log("TestProduceModelPackage started")
 	schema := explorer.ExploreSchema(config)
 	pkg := ProduceModelPackage(config, schema)
 
 	t.Logf("PackageName = %s", pkg.PackageName)
 	for _, mt := range pkg.ModelTypes {
+		t.Logf("ModelType = %s", mt.TypeName)
+	}
+}
+
+func TestProduceViewModelPackage(t *testing.T) {
+	t.Log("TestProduceViewModelPackage started")
+	schema := explorer.ExploreSchema(config)
+	pkg := ProduceViewModelPackage(config, schema)
+
+	t.Logf("PackageName = %s", pkg.PackageName)
+	for _, mt := range pkg.ViewModelTypes {
 		t.Logf("ModelType = %s", mt.TypeName)
 	}
 }
