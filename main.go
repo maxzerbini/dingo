@@ -41,6 +41,7 @@ func main() {
 			if !config.SkipServiceGeneration {
 				generators.GenerateService(&config, srvpkg)
 				generators.GenerateConfig(&config)
+				generators.GenerateMain(&config, srvpkg)
 			}
 		}
 	}

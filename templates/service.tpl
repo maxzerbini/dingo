@@ -9,6 +9,10 @@ type {{.TypeName}} struct {
 	{{range .Fields}}{{.FieldName}} {{.FieldType}}
 	{{end}}
 }
+//Create a {{.TypeName}}
+func New{{.TypeName}}() *{{.TypeName}} {
+	return &{{.TypeName}}{ Biz:{{.Biz.PackageName}}.New{{.Biz.TypeName}}() }
+}
 // Endpoint GET [basehost]/{{.ResourceName}}?take=[value]&skip=[value]
 func (s *{{.TypeName}}) List(c *gin.Context) {
     take,_ := strconv.Atoi(c.DefaultQuery("take", "10"))
