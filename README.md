@@ -157,7 +157,7 @@ func (b *CustomerBiz) Count() (count int64, err error){
 	return b.Dao.Count(dao.Connection)
 }
 ```
-## Service Object
+## Service Object Generation
 These object offer a set of methods used to construct and expose RESTful API.
 This generator is under development.
 
@@ -206,18 +206,23 @@ Optional configuration parameters
 - _ExcludedEntities_ is an optional list of enity names that will be exluded
 - _Entities_ is a list of included entities, if it's void all the entities are considered
 
-## Using generated DAO e Biz code
+## Using generated DAO and Biz code
 It's very easy using generated code. Here an example:
 ```Go
+// open the connection
 conn, err := sql.Open("mysql","myuser:password@tcp(localhost:3306)/myDatabase?parseTime=true")
 if err != nil {
 	panic(err)
 } else {
+	// set the connection
 	dao.Connection = conn
 }
 b := biz.NewCustomerBiz()
 cust := &viewmodel.Customer{Name: "Max", State: "PENDING", CreationDate: time.Now(), UpdateDate: time.Now()}
+// insert a new customer
 id, err := b.Insert(cust)
+// get the list of customers
+result, err := b.List(100, 0)
 ```
 
 ## Known issues
