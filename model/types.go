@@ -55,12 +55,12 @@ type BizType struct {
 }
 
 type ServiceType struct {
-	PackageName string
-	TypeName    string
-    ResourceName string
-	Fields      []*BaseField
-	ViewModel   *ViewModelType
-	Biz         *BizType
+	PackageName  string
+	TypeName     string
+	ResourceName string
+	Fields       []*BaseField
+	ViewModel    *ViewModelType
+	Biz          *BizType
 }
 
 type ModelPackage struct {
@@ -97,7 +97,7 @@ type ServicePackage struct {
 	BasePackage    string
 	PackageName    string
 	ImportPackages []string
-	ServiceTypes       []*ServiceType
+	ServiceTypes   []*ServiceType
 }
 
 func (pkg *ModelPackage) HasImport(impPkg string) bool {

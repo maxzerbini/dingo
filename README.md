@@ -1,9 +1,23 @@
 # DinGo
-Data access in Go (DinGo). Generate Data Access Object (DAO) code from MySQL database schema.
+Data access in Go (DinGo). From database schema to RESTful API: all the code is generated for you in few seconds. 
 
 ![Dingo](doc/img/dingo_small.png)
 
-The project is under development.
+## Main features
+
+DinGo creates a Microservice application starting from your MySQL database schema. 
+These are the main steps followed by Dingo:
+- Data Model generation
+- Data Access Object (DAO) generation
+- Business Object (Biz) generation
+- View-Model generation
+- Service Object generation
+- Host Server creation
+- JSON configuration file creation
+
+The result you get is a Web API application that you just compile and run.
+
+NOTE: Currently the project is under development, not all the endpoints are implemented.
 
 ## Model Generation
 DinGo generates Model Data Transfer Object (DTO) reading the MySql database schema.
@@ -146,7 +160,16 @@ func (b *CustomerBiz) Count() (count int64, err error){
 These object offer a set of methods used to construct and expose RESTful API.
 This generator is under development.
 
-## Configuration
+## REST API Generation
+DinGo can generate the set of RESTful API endpoints needed to perform CRUD operations on entities.
+Each entity corresponds to a resource, and each resource has the necessary endpoints to be managed:
+- GET [basehost]/resourcename?skip=[value]&take=[value] lists the elements
+- POST [basehost]/resourcename creates a new element
+- PUT [basehost]/resourcename updates an element
+
+This generator is under development.
+
+## DinGo Configuration
 The MySQL connection and other configuration parameters are defined in the *config.json* file.
 Here is a configuration example:
 ```JSON
@@ -182,10 +205,18 @@ If you rename or move the configuration file then run
 $ dingo -conf=/mypath/myconfig.json
 ```
 
-## Using generated structs
+## Using generated DAO e Biz code
 It's very easy using generated code. Here an example:
 ```Go
-
+conn, err := sql.Open("mysql","myuser:password@tcp(localhost:3306)/myDatabase?parseTime=true")
+if err != nil {
+	panic(err)
+} else {
+	dao.Connection = conn
+}
+b := biz.NewCustomerBiz()
+cust := &viewmodel.Customer{Name: "Max", State: "PENDING", CreationDate: time.Now(), UpdateDate: time.Now()}
+id, err := b.Insert(cust)
 ```
 
 ## Known issues

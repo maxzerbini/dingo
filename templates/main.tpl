@@ -7,6 +7,7 @@ import "database/sql"
 import _ "github.com/go-sql-driver/mysql"
 import "github.com/gin-gonic/gin"
 import "{{.BasePackage}}/{{.PackageName}}"
+import "{{.BasePackage}}/dao"
 
 type Configuration struct {
 	DatabaseHostname              string
@@ -35,6 +36,8 @@ func main(){
 	// Creates a router without any middleware by default
 	router := gin.New()
 	router.Use(gin.Recovery())
+	router.Use(gin.Logger())
+	gin.SetMode(gin.DebugMode)
 	registerAPI(conf, router)
 	router.Run(conf.WebHost + ":" + conf.WebPort)
 }
@@ -51,8 +54,10 @@ func initConnection(conf Configuration) {
 
 func registerAPI(conf Configuration, router *gin.Engine) {
 	{{range $i,$e := .ServiceTypes}}
-	s{{$i}} := service.NewCustomerService()
+	s{{$i}} := {{$e.PackageName}}.New{{$e.TypeName}}()
 	router.GET(conf.WebBaseHost+"/{{$e.ResourceName}}", s{{$i}}.List)
+	{{if $e.Biz.IsReadOnly}}{{else}}router.POST(conf.WebBaseHost+"/{{$e.ResourceName}}", s{{$i}}.Insert)
+	router.PUT(conf.WebBaseHost+"/{{$e.ResourceName}}", s{{$i}}.Update){{end}}
 	{{end}}
 }
 
