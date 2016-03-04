@@ -6,6 +6,7 @@ Data access in Go (DinGo). From database schema to RESTful API: all the code is 
 ## Main features
 
 DinGo creates a Microservice application starting from your MySQL database schema. 
+
 These are the main steps followed by Dingo:
 - Data Model generation
 - Data Access Object (DAO) generation
@@ -94,7 +95,7 @@ func (dao *CustomerDao) Count(conn *sql.DB) (count int64, err error){
 	...
 }
 ```
-The last two methods are available also for Views.
+The last two methods are available also for Views of the database.
 
 ## View-Model Generation
 The View-Model objects are produced in a similar manner to those of the Model. 
@@ -169,6 +170,22 @@ Each entity corresponds to a resource, and each resource has the necessary endpo
 
 This generator is under development.
 
+## Building DinGo
+```bash
+$ go get github.com/maxzerbini/dingo
+$ go build -i github.com/maxzerbini/dingo
+```
+
+## Running DinGo
+Make sure to properly set the *config.json* file with your connection parameters and run
+```bash
+$ dingo 
+```
+If you rename or move the configuration file then run
+```bash
+$ dingo -conf=/mypath/myconfig.json
+```
+
 ## DinGo Configuration
 The MySQL connection and other configuration parameters are defined in the *config.json* file.
 Here is a configuration example:
@@ -189,22 +206,6 @@ Optional configuration parameters
 - _ExcludedEntities_ is an optional list of enity names that will be exluded
 - _Entities_ is a list of included entities, if it's void all the entities are considered
 
-## Building DinGo
-```bash
-$ go get github.com/maxzerbini/dingo
-$ go build -i github.com/maxzerbini/dingo
-```
-
-## Running DinGo
-Make sure to properly set the *config.json* file with your connection parameters and run
-```bash
-$ dingo 
-```
-If you rename or move the configuration file then run
-```bash
-$ dingo -conf=/mypath/myconfig.json
-```
-
 ## Using generated DAO e Biz code
 It's very easy using generated code. Here an example:
 ```Go
@@ -223,6 +224,7 @@ id, err := b.Insert(cust)
 - The DAO components are produced correctly if the tables have a PK
 - Some columns types that are not recognized (such as JSON) are mapped to string fields
 - DinGo maps DATE, TIME, DATETIME and TIMESTAMP column types to *time.Time* assuming that the connection has opened using the DSN parameter *parseTime=true*
+- If you have a lot of entities in yor database you could produce a *"SOA Monolith"*, using the configuration parameters _ExcludedEntities_ or _Entities_ and _BasePackage_ you can limit the number of application's endpoints, obtaining many Microservices
 
 ## Warning
 It's recommended to test the generated code before using it in production.
