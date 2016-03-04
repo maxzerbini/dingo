@@ -47,7 +47,7 @@ func (b *{{.TypeName}}) FindByPrimaryKey({{range $i, $e := .Model.PKFields}}{{if
 	}
 }{{end}}
 // List the {{.Model.TypeName}} entities.
-func (b *{{.TypeName}}) List(take int32, skip int32) (list []*{{.ViewModel.PackageName}}.{{.ViewModel.TypeName}}, err error) {
+func (b *{{.TypeName}}) List(take int, skip int) (list []*{{.ViewModel.PackageName}}.{{.ViewModel.TypeName}}, err error) {
 	mlist, err := b.Dao.List(dao.Connection, take, skip)
 	if err != nil {
 		return nil, err

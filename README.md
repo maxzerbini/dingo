@@ -87,7 +87,7 @@ The View-Model objects are produced in a similar manner to those of the Model.
 The difference between these structures is that the former do not depend on the sql package and are designed to be serialized in JSON.
 
 ## Business Object Generation
-These objects are wrapper around DAO. Their interface differ from the DAO interface because of View-Model types present on the method signatures.
+These objects are wrapper around DAO objects. Their interface differ from the DAO interface because of View-Model types present on the method signatures.
 This is an example of generated Biz object:
 ```Go
 // Business object for Customer entities.
@@ -102,20 +102,14 @@ func NewCustomerBiz() *CustomerBiz {
 func (b *CustomerBiz) ToViewModel(m *model.Customer) *viewmodel.Customer{
 	v := &viewmodel.Customer{}
 	v.Id = m.Id
-	v.Name = m.Name
-	v.State = m.State
-	v.CreationDate = m.CreationDate
-	v.UpdateDate = m.UpdateDate
+	...
 	return v
 }
 // Convert a view-model in a model entity
 func (b *CustomerBiz) ToModel(v *viewmodel.Customer) *model.Customer{
 	m := &model.Customer{}
 	m.Id = v.Id
-	m.Name = v.Name
-	m.State = v.State
-	m.CreationDate = v.CreationDate
-	m.UpdateDate = v.UpdateDate
+	...
 	return m
 }
 // Insert a new Customer entity and returns the last insert Id.
@@ -141,21 +135,16 @@ func (b *CustomerBiz) FindByPrimaryKey(Id int64) (v *viewmodel.Customer, err err
 }
 // List the Customer entities.
 func (b *CustomerBiz) List(take int32, skip int32) (list []*viewmodel.Customer, err error) {
-	mlist, err := b.Dao.List(dao.Connection, take, skip)
-	if err != nil {
-		return nil, err
-	} else {
-		for _, m := range mlist {
-			list = append(list, b.ToViewModel(m))
-		}
-		return list, nil
-	}
+	...
 }
 // Count the Customer entities.
 func (b *CustomerBiz) Count() (count int64, err error){
 	return b.Dao.Count(dao.Connection)
 }
 ```
+## Service Object
+These object expose a set of methods used to construct and expose RESTful API.
+This generator is under development.
 
 ## Configuration
 The MySQL connection and other configuration parameters are defined in the *config.json* file.
@@ -173,6 +162,9 @@ Here is a configuration example:
 	"Entities": []
 }
 ```
+Optional configuration parameters
+- _ExcludedEntities_ is an optional list of enity names that will be exluded
+- _Entities_ is a list of included entities, if it's void all the entities are considered
 
 ## Building DinGo
 ```bash
@@ -181,13 +173,19 @@ $ go build -i github.com/maxzerbini/dingo
 ```
 
 ## Running DinGo
-Make sure to properly set the config.json file with your connection parameters and run
+Make sure to properly set the *config.json* file with your connection parameters and run
 ```bash
 $ dingo 
 ```
 If you rename or move the configuration file then run
 ```bash
 $ dingo -conf=/mypath/myconfig.json
+```
+
+## Using generated structs
+It's very easy using generated code. Here an example:
+```Go
+
 ```
 
 ## Known issues

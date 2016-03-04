@@ -2,7 +2,6 @@ package main
 
 import (
 	"log"
-	"os"
 	"testing"
 
 	"github.com/maxzerbini/dingo/explorer"
@@ -11,27 +10,24 @@ import (
 	"github.com/maxzerbini/dingo/producers"
 )
 
-var config *model.Configuration
-
 func init() {
-	config = &model.Configuration{Hostname: "localhost", Port: "3306", DatabaseName: "Customers", Username: "zerbo", Password: "Mysql.2016"}
-	gopath := os.Getenv("GOPATH")
-	testProjectPath := gopath + "/src/github.com/maxzerbini/prjtest"
-	if _, err := os.Stat(testProjectPath); os.IsNotExist(err) {
-		err = os.MkdirAll(testProjectPath, 0777)
-		if err != nil {
-			log.Fatalf("Can not create directory %s", testProjectPath)
-		}
-	}
-	config.OutputPath = testProjectPath
-	config.BasePackage = "github.com/maxzerbini/prjtest"
+	configPath = "config.json"
 }
 
 func TestGeneration(t *testing.T) {
-	t.Log("TestGenerateModel started")
-	schema := explorer.ExploreSchema(config)
-	modelpkg := producers.ProduceModelPackage(config, schema)
-	daopkg := producers.ProduceDaoPackage(config, schema, modelpkg)
-	generators.GenerateModel(config, modelpkg)
-	generators.GenerateDao(config, daopkg)
+	log.Printf("DinGo Code Generator\r\n")
+	log.Printf("Processing configuration file %s\r\n", configPath)
+	config := model.LoadConfiguration(configPath)
+	schema := explorer.ExploreSchema(&config)
+	modelpkg := producers.ProduceModelPackage(&config, schema)
+	daopkg := producers.ProduceDaoPackage(&config, schema, modelpkg)
+	viewmodelpkg := producers.ProduceViewModelPackage(&config, schema)
+	bizpkg := producers.ProduceBizPackage(&config, modelpkg, daopkg, viewmodelpkg)
+	srvpkg := producers.ProduceServicePackage(&config, viewmodelpkg, bizpkg)
+	generators.GenerateModel(&config, modelpkg)
+	generators.GenerateDao(&config, daopkg)
+	generators.GenerateViewModel(&config, viewmodelpkg)
+	generators.GenerateBiz(&config, bizpkg)
+	generators.GenerateService(&config, srvpkg)
+	log.Printf("Code generation done.\r\n")
 }

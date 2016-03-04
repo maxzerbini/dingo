@@ -63,7 +63,7 @@ func (dao *{{.TypeName}}) FindByPrimaryKey(conn *sql.DB, {{range $i, $e := .Mode
 	}
 }
 // List the {{.Model.TypeName}} entities.
-func (dao *{{.TypeName}}) List(conn *sql.DB, take int32, skip int32) (list []*{{.Model.PackageName}}.{{.Model.TypeName}}, err error) {
+func (dao *{{.TypeName}}) List(conn *sql.DB, take int, skip int) (list []*{{.Model.PackageName}}.{{.Model.TypeName}}, err error) {
 	q := "SELECT {{range $i, $e := .Entity.Columns}}{{if $i}}, {{end}}{{.ColumnName}}{{end}} FROM {{.Entity.TableName}} LIMIT ? OFFSET ?"
 	rows, err := conn.Query(q, take, skip)
 	if err != nil {
@@ -104,7 +104,7 @@ type {{.TypeName}} struct {
 	{{end}}
 }
 // List the {{.Model.TypeName}} entities in the view.
-func (dao *{{.TypeName}}) List(conn *sql.DB, take int32, skip int32) (list []*{{.Model.PackageName}}.{{.Model.TypeName}}, err error){
+func (dao *{{.TypeName}}) List(conn *sql.DB, take int, skip int) (list []*{{.Model.PackageName}}.{{.Model.TypeName}}, err error){
 	q := "SELECT {{range $i, $e := .View.Columns}}{{if $i}}, {{end}}{{.ColumnName}}{{end}} FROM {{.View.ViewName}} LIMIT ? OFFSET ?"
 	rows, err := conn.Query(q, take, skip)
 	if err != nil {

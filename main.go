@@ -31,9 +31,17 @@ func main() {
 	daopkg := producers.ProduceDaoPackage(&config, schema, modelpkg)
 	viewmodelpkg := producers.ProduceViewModelPackage(&config, schema)
 	bizpkg := producers.ProduceBizPackage(&config, modelpkg, daopkg, viewmodelpkg)
+	srvpkg := producers.ProduceServicePackage(&config, viewmodelpkg, bizpkg)
 	generators.GenerateModel(&config, modelpkg)
-	generators.GenerateDao(&config, daopkg)
-	generators.GenerateViewModel(&config, viewmodelpkg)
-	generators.GenerateBiz(&config, bizpkg)
+	if !config.SkipDaoGeneration {
+		generators.GenerateDao(&config, daopkg)
+		if !config.SkipBizGeneration {
+			generators.GenerateViewModel(&config, viewmodelpkg)
+			generators.GenerateBiz(&config, bizpkg)
+			if !config.SkipServiceGeneration {
+				generators.GenerateService(&config, srvpkg)
+			}
+		}
+	}
 	log.Printf("Code generation done.\r\n")
 }

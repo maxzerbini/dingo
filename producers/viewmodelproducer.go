@@ -22,7 +22,7 @@ func ProduceViewModelPackage(config *model.Configuration, schema *model.Database
 		}
 	}
 	for _, view := range schema.Views {
-		mt := &model.ViewModelType{TypeName: getModelTypeName(view.ViewName), PackageName: "model"}
+		mt := &model.ViewModelType{TypeName: getModelTypeName(view.ViewName), PackageName: "viewmodel"}
 		pkg.ViewModelTypes = append(pkg.ViewModelTypes, mt)
 		for _, column := range view.Columns {
 			field := &model.ViewModelField{FieldName: getModelFieldName(column.ColumnName), FieldType: getViewModelFieldType(pkg, column)}

@@ -54,6 +54,15 @@ type BizType struct {
 	IsReadOnly  bool
 }
 
+type ServiceType struct {
+	PackageName string
+	TypeName    string
+    ResourceName string
+	Fields      []*BaseField
+	ViewModel   *ViewModelType
+	Biz         *BizType
+}
+
 type ModelPackage struct {
 	BasePackage    string
 	PackageName    string
@@ -82,6 +91,13 @@ type BizPackage struct {
 	PackageName    string
 	ImportPackages []string
 	BizTypes       []*BizType
+}
+
+type ServicePackage struct {
+	BasePackage    string
+	PackageName    string
+	ImportPackages []string
+	ServiceTypes       []*ServiceType
 }
 
 func (pkg *ModelPackage) HasImport(impPkg string) bool {
@@ -140,6 +156,20 @@ func (pkg *BizPackage) HasImports() bool {
 }
 
 func (pkg *BizPackage) AppendImport(pkgName string) bool {
+	for _, imp := range pkg.ImportPackages {
+		if imp == pkgName {
+			return false
+		}
+	}
+	pkg.ImportPackages = append(pkg.ImportPackages, pkgName)
+	return true
+}
+
+func (pkg *ServicePackage) HasImports() bool {
+	return len(pkg.ImportPackages) > 0
+}
+
+func (pkg *ServicePackage) AppendImport(pkgName string) bool {
 	for _, imp := range pkg.ImportPackages {
 		if imp == pkgName {
 			return false
