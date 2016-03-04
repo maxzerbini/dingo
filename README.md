@@ -229,7 +229,7 @@ result, err := b.List(100, 0)
 - The DAO components are produced correctly if the tables have a PK
 - Some columns types that are not recognized (such as JSON) are mapped to string fields
 - DinGo maps DATE, TIME, DATETIME and TIMESTAMP column types to *time.Time* assuming that the connection has opened using the DSN parameter *parseTime=true*
-- If you have a lot of entities in yor database you could produce a *"SOA Monolith"*, using the configuration parameters _ExcludedEntities_ or _Entities_ and _BasePackage_ you can limit the number of application's endpoints, obtaining many Microservices
+- If you have a lot of entities in your database you could produce a *"SOA Monolith"*, using the configuration parameters _ExcludedEntities_ or _Entities_ and _BasePackage_ you can limit the number of application's endpoints, obtaining many Microservices
 
 ## Warning
 It's recommended to test the generated code before using it in production.
