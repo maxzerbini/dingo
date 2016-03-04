@@ -29,5 +29,6 @@ func TestGeneration(t *testing.T) {
 	generators.GenerateViewModel(&config, viewmodelpkg)
 	generators.GenerateBiz(&config, bizpkg)
 	generators.GenerateService(&config, srvpkg)
+	generators.GenerateConfig(&config)
 	log.Printf("Code generation done.\r\n")
 }

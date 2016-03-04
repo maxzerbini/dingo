@@ -143,7 +143,7 @@ func (b *CustomerBiz) Count() (count int64, err error){
 }
 ```
 ## Service Object
-These object expose a set of methods used to construct and expose RESTful API.
+These object offer a set of methods used to construct and expose RESTful API.
 This generator is under development.
 
 ## Configuration

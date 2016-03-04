@@ -40,6 +40,7 @@ func main() {
 			generators.GenerateBiz(&config, bizpkg)
 			if !config.SkipServiceGeneration {
 				generators.GenerateService(&config, srvpkg)
+				generators.GenerateConfig(&config)
 			}
 		}
 	}
