@@ -38,8 +38,9 @@ func (b *{{.TypeName}}) Delete(v *{{.ViewModel.PackageName}}.{{.ViewModel.TypeNa
 	return b.Dao.Delete(dao.Connection, b.ToModel(v))
 }
 // Find the {{.Model.TypeName}} entity by primary keys, returns nil if not found.
-func (b *{{.TypeName}}) FindByPrimaryKey({{range $i, $e := .Model.PKFields}}{{if $i}}, {{end}}{{.FieldName}} {{.FieldType}}{{end}}) (v *{{.ViewModel.PackageName}}.{{.ViewModel.TypeName}}, err error){
-	m, err := b.Dao.FindByPrimaryKey(dao.Connection, {{range $i, $e := .Model.PKFields}}{{if $i}}, {{end}}{{.FieldName}}{{end}})
+func (b *{{.TypeName}}) Find(vm *{{.ViewModel.PackageName}}.{{.ViewModel.TypeName}}) (v *{{.ViewModel.PackageName}}.{{.ViewModel.TypeName}}, err error){
+	m := b.ToModel(vm)
+	m, err = b.Dao.FindByPrimaryKey(dao.Connection, {{range $i, $e := .Model.PKFields}}{{if $i}}, {{end}}m.{{.FieldName}}{{end}})
 	if err != nil {
 		return nil, err
 	} else {

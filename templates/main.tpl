@@ -56,8 +56,11 @@ func registerAPI(conf Configuration, router *gin.Engine) {
 	{{range $i,$e := .ServiceTypes}}
 	s{{$i}} := {{$e.PackageName}}.New{{$e.TypeName}}()
 	router.GET(conf.WebBaseHost+"/{{$e.ResourceName}}", s{{$i}}.List)
+	router.GET(conf.WebBaseHost+"/{{$e.ResourceName}}/count", s{{$i}}.Count)
 	{{if $e.Biz.IsReadOnly}}{{else}}router.POST(conf.WebBaseHost+"/{{$e.ResourceName}}", s{{$i}}.Insert)
-	router.PUT(conf.WebBaseHost+"/{{$e.ResourceName}}", s{{$i}}.Update){{end}}
-	{{end}}
+	router.PUT(conf.WebBaseHost+"/{{$e.ResourceName}}", s{{$i}}.Update)
+	router.POST(conf.WebBaseHost+"/{{$e.ResourceName}}/delete", s{{$i}}.Delete)
+	router.POST(conf.WebBaseHost+"/{{$e.ResourceName}}/find", s{{$i}}.Find)
+	{{end}}{{end}}
 }
 

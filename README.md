@@ -140,13 +140,8 @@ func (b *CustomerBiz) Delete(v *viewmodel.Customer) (rowsAffected int64, err err
 	return b.Dao.Delete(dao.Connection, b.ToModel(v))
 }
 // Find the Customer entity by primary keys, returns nil if not found.
-func (b *CustomerBiz) FindByPrimaryKey(Id int64) (v *viewmodel.Customer, err error){
-	m, err := b.Dao.FindByPrimaryKey(dao.Connection, Id)
-	if err != nil {
-		return nil, err
-	} else {
-		return b.ToViewModel(m), nil
-	}
+func (b *CustomerBiz) Find(mv *viewmodel.Customer) (v *viewmodel.Customer, err error){
+	...
 }
 // List the Customer entities.
 func (b *CustomerBiz) List(take int32, skip int32) (list []*viewmodel.Customer, err error) {
@@ -158,8 +153,7 @@ func (b *CustomerBiz) Count() (count int64, err error){
 }
 ```
 ## Service Object Generation
-These object offer a set of methods used to construct and expose RESTful API.
-This generator is under development.
+These objects offer a set of methods used to construct and expose RESTful API.
 
 ## REST API Generation
 DinGo can generate the set of RESTful API endpoints needed to perform CRUD operations on entities.
@@ -167,8 +161,10 @@ Each entity corresponds to a resource, and each resource has the necessary endpo
 - GET [basehost]/resourcename?skip=[value]&take=[value] lists the elements
 - POST [basehost]/resourcename creates a new element
 - PUT [basehost]/resourcename updates an element
+- POST [basehost]/resourcename/delete deletes an element
+- POST [basehost]/resourcename/find finds an element by primary keys
+- GET [basehost]/resourcename/count counts the etities
 
-This generator is under development.
 
 ## Building DinGo
 ```bash
@@ -229,7 +225,8 @@ result, err := b.List(100, 0)
 - The DAO components are produced correctly if the tables have a PK
 - Some columns types that are not recognized (such as JSON) are mapped to string fields
 - DinGo maps DATE, TIME, DATETIME and TIMESTAMP column types to *time.Time* assuming that the connection has opened using the DSN parameter *parseTime=true*
-- If you have a lot of entities in your database you could produce a *"SOA Monolith"*, using the configuration parameters _ExcludedEntities_ or _Entities_ and _BasePackage_ you can limit the number of application's endpoints, obtaining many Microservices
+- If you have a lot of entities in your database, you could produce a *"SOA Monolith"*, but using the configuration parameters _ExcludedEntities_ or _Entities_ and _BasePackage_ you can limit the number of endpoints and you can produce many small applications, obtaining many Microservices
+- Some HTTP verbs such as DELETE defining the service endpoints, may be they will be introduced in the future
 
 ## Warning
 It's recommended to test the generated code before using it in production.

@@ -42,6 +42,34 @@ func (s *{{.TypeName}}) Update(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, "Invalid input format.")
 	}
 }
+// Endpoint POST [basehost]/{{.ResourceName}}/delete
+func (s *{{.TypeName}}) Delete(c *gin.Context) {
+	var v {{.ViewModel.PackageName}}.{{.ViewModel.TypeName}}
+	if c.BindJSON(&v) == nil {
+		value,err := s.Biz.Delete(&v)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, err)
+		} else {
+			c.JSON(http.StatusOK, value)
+		}
+	} else {
+		c.JSON(http.StatusBadRequest, "Invalid input format.")
+	}
+}
+// Endpoint POST [basehost]/{{.ResourceName}}/find
+func (s *{{.TypeName}}) Find(c *gin.Context) {
+	var v {{.ViewModel.PackageName}}.{{.ViewModel.TypeName}}
+	if c.BindJSON(&v) == nil {
+		value,err := s.Biz.Find(&v)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, err)
+		} else {
+			c.JSON(http.StatusOK, value)
+		}
+	} else {
+		c.JSON(http.StatusBadRequest, "Invalid input format.")
+	}
+}
 {{end}}
 // Endpoint GET [basehost]/{{.ResourceName}}?take=[value]&skip=[value]
 func (s *{{.TypeName}}) List(c *gin.Context) {
@@ -53,6 +81,15 @@ func (s *{{.TypeName}}) List(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, err)
 	} else {
 		c.JSON(http.StatusOK, list)
+	}
+}
+// Endpoint GET [basehost]/{{.ResourceName}}/count
+func (s *{{.TypeName}}) Count(c *gin.Context) {
+	value,err := s.Biz.Count()
+	if err != nil {
+		c.JSON(http.StatusBadRequest, err)
+	} else {
+		c.JSON(http.StatusOK, value)
 	}
 }
 {{end}}
