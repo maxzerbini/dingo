@@ -219,6 +219,9 @@ cust := &viewmodel.Customer{Name: "Max", State: "PENDING", CreationDate: time.No
 id, err := b.Insert(cust)
 // get the list of customers
 result, err := b.List(100, 0)
+// find entity by primary key
+cust2 := &viewmodel.Customer{Id: 7}
+cust2, err = b.Find(cust2)
 ```
 
 ## Known issues
@@ -226,7 +229,7 @@ result, err := b.List(100, 0)
 - Some columns types that are not recognized (such as JSON) are mapped to string fields
 - DinGo maps DATE, TIME, DATETIME and TIMESTAMP column types to *time.Time* assuming that the connection has opened using the DSN parameter *parseTime=true*
 - If you have a lot of entities in your database, you could produce a *"SOA Monolith"*, but using the configuration parameters _ExcludedEntities_ or _Entities_ and _BasePackage_ you can limit the number of endpoints and you can produce many small applications, obtaining many Microservices
-- Some HTTP verbs such as DELETE defining the service endpoints, may be they will be introduced in the future
+- Some HTTP verbs such as DELETE are not used defining the service endpoints, may be they will be introduced in the future
 
 ## Warning
 It's recommended to test the generated code before using it in production.
