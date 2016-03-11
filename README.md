@@ -158,11 +158,12 @@ These objects offer a set of methods used to construct and expose RESTful API.
 ## REST API Generation
 DinGo can generate the set of RESTful API endpoints needed to perform CRUD operations on entities. Each entity corresponds to a resource, and each resource has the necessary endpoints to be managed. 
 If the resource has a simple identifier (the corresponding entity has one-column PK) then Dingo generates these endpoints:
-- GET [basehost]/resourcename?skip=[value]&take=[value]&count=all lists the elements
-- POST [basehost]/resourcename creates a new element
-- PUT [basehost]/resourcename/:id updates the element has PK = id
-- DELETE [basehost]/resourcename/:id deletes an element
-- GET [basehost]/resourcename/:id finds an element by primary key
+- *GET [basehost]/resourcename?skip=[value]&take=[value]&count=all* lists the elements
+- *POST [basehost]/resourcename* creates a new element
+- *PUT [basehost]/resourcename/:id* updates the element has PK = id
+- *DELETE [basehost]/resourcename/:id* deletes an element
+- *GET [basehost]/resourcename/:id* finds an element by primary key
+
 If the resource has a complex identifier and the corresponding entity has a PK made of more columns, the generated endpoints are these:
 - GET [basehost]/resourcename?skip=[value]&take=[value] lists the elements
 - POST [basehost]/resourcename creates a new element
@@ -241,7 +242,8 @@ cust2, err = b.Find(cust2)
 - Some columns types that are not recognized (such as JSON) are mapped to string fields
 - DinGo maps DATE, TIME, DATETIME and TIMESTAMP column types to *time.Time* assuming that the connection has opened using the DSN parameter *parseTime=true*
 - If you have a lot of entities in your database, you could produce a *"SOA Monolith"*, but using the configuration parameters _ExcludedEntities_ or _Entities_ and _BasePackage_ you can limit the number of endpoints and you can produce many small applications, obtaining many Microservices
-- Some HTTP verbs such as DELETE are not used defining the service endpoints, may be they will be introduced in the future
+- Some HTTP verbs such as DELETE are not used defining the service endpoints of the resources that have complex primery keys
 
 ## Warning
-It's recommended to test the generated code before using it in production.
+It's recommended to test the generated code before using it in production. 
+If you find a problem feel free to submit an issue.
