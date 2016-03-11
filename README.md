@@ -156,8 +156,14 @@ func (b *CustomerBiz) Count() (count int64, err error){
 These objects offer a set of methods used to construct and expose RESTful API.
 
 ## REST API Generation
-DinGo can generate the set of RESTful API endpoints needed to perform CRUD operations on entities.
-Each entity corresponds to a resource, and each resource has the necessary endpoints to be managed:
+DinGo can generate the set of RESTful API endpoints needed to perform CRUD operations on entities. Each entity corresponds to a resource, and each resource has the necessary endpoints to be managed. 
+If the resource has a simple identifier (the corresponding entity has one-column PK) then Dingo generates these endpoints:
+- GET [basehost]/resourcename?skip=[value]&take=[value]&count=all lists the elements
+- POST [basehost]/resourcename creates a new element
+- PUT [basehost]/resourcename/:id updates the element has PK = id
+- DELETE [basehost]/resourcename/:id deletes an element
+- GET [basehost]/resourcename/:id finds an element by primary key
+If the resource has a complex identifier and the corresponding entity has a PK made of more columns, the generated endpoints are these:
 - GET [basehost]/resourcename?skip=[value]&take=[value] lists the elements
 - POST [basehost]/resourcename creates a new element
 - PUT [basehost]/resourcename updates an element
