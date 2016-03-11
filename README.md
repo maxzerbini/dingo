@@ -165,12 +165,12 @@ If the resource has a simple identifier (the corresponding entity has one-column
 - *GET [basehost]/resourcename/:id* finds an element by primary key
 
 If the resource has a complex identifier and the corresponding entity has a PK made of more columns, the generated endpoints are these:
-- GET [basehost]/resourcename?skip=[value]&take=[value] lists the elements
-- POST [basehost]/resourcename creates a new element
-- PUT [basehost]/resourcename updates an element
-- POST [basehost]/resourcename/delete deletes an element
-- POST [basehost]/resourcename/find finds an element by primary keys
-- GET [basehost]/resourcename/count counts the etities
+- *GET [basehost]/resourcename?skip=[value]&take=[value]* lists the elements
+- *POST [basehost]/resourcename* creates a new element
+- *PUT [basehost]/resourcename* updates an element
+- *POST [basehost]/resourcename/delete* deletes an element
+- *POST [basehost]/resourcename/find* finds an element by primary keys
+- *GET [basehost]/resourcename/count* counts the etities
 
 
 ## Building DinGo
