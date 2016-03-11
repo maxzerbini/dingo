@@ -21,7 +21,7 @@ func (b *{{.TypeName}}) ToViewModel(m *{{.Model.PackageName}}.{{.Model.TypeName}
 // Convert a view-model in a model entity
 func (b *{{.TypeName}}) ToModel(v *{{.ViewModel.PackageName}}.{{.ViewModel.TypeName}}) *{{.Model.PackageName}}.{{.Model.TypeName}}{
 	m := &{{.Model.PackageName}}.{{.Model.TypeName}}{}
-	{{range .Model.Fields}}{{if .IsNullable}}m.{{.FieldName}} =  {{.FieldType}} { {{.NullableFieldType}}:v.{{.FieldName}} }{{else}}m.{{.FieldName}} = v.{{.FieldName}}{{end}}
+	{{range .Model.Fields}}{{if .IsNullable}}m.{{.FieldName}} =  {{.FieldType}} {Valid:true, {{.NullableFieldType}}:v.{{.FieldName}} }{{else}}m.{{.FieldName}} = v.{{.FieldName}}{{end}}
 	{{end}}
 	return m
 }
@@ -46,7 +46,28 @@ func (b *{{.TypeName}}) Find(vm *{{.ViewModel.PackageName}}.{{.ViewModel.TypeNam
 	} else {
 		return b.ToViewModel(m), nil
 	}
-}{{end}}
+}
+{{if .ViewModel.IsSimplePK}}// Find the {{.Model.TypeName}} entity by primary key (converting it to the correct type), returns nil if not found.
+func (b *{{.TypeName}}) FindById(id string) (v *{{.ViewModel.PackageName}}.{{.ViewModel.TypeName}}, err error){
+	vm := &{{.ViewModel.PackageName}}.{{.ViewModel.TypeName}}{}
+	m, err := b.Dao.FindByPrimaryKey(dao.Connection, vm.ConvertPK(id))
+	if err != nil {
+		return nil, err
+	} else {
+		return b.ToViewModel(m), nil
+	}
+}
+// Update a {{.Model.TypeName}} entity and returns the number of affected rows.
+func (b *{{.TypeName}}) UpdateById(id string, v *{{.ViewModel.PackageName}}.{{.ViewModel.TypeName}}) (rowsAffected int64, err error) {
+	{{range .ViewModel.PKFields}}v.{{.FieldName}} = v.ConvertPK(id){{end}}
+	return b.Dao.Update(dao.Connection, b.ToModel(v))
+}
+// Delete a {{.Model.TypeName}} entity and returns the number of affected rows.
+func (b *{{.TypeName}}) DeleteById(id string) (rowsAffected int64, err error) {
+	v := &{{.ViewModel.PackageName}}.{{.ViewModel.TypeName}}{}
+	{{range .ViewModel.PKFields}}v.{{.FieldName}} = v.ConvertPK(id){{end}}
+	return b.Dao.Delete(dao.Connection, b.ToModel(v))
+}{{end}}{{end}}
 // List the {{.Model.TypeName}} entities.
 func (b *{{.TypeName}}) List(take int, skip int) (list []*{{.ViewModel.PackageName}}.{{.ViewModel.TypeName}}, err error) {
 	mlist, err := b.Dao.List(dao.Connection, take, skip)

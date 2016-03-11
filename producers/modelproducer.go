@@ -25,9 +25,12 @@ func ProduceModelPackage(config *model.Configuration, schema *model.DatabaseSche
 				field.IsAutoInc = true
 			}
 			if column.IsNullable {
-				if field.FieldType != "time.Time" { // exclude time fields
+				if field.FieldType != "mysql.NullTime" { // exclude time fields
 					field.IsNullable = true
 					field.NullableFieldType = field.FieldType[8:] // scorporate sql.Null
+				} else {
+					field.IsNullable = true
+					field.NullableFieldType = field.FieldType[10:] // scorporate mysql.Null
 				}
 			}
 			mt.Fields = append(mt.Fields, field)
@@ -78,8 +81,13 @@ func getModelFieldType(pkg *model.ModelPackage, column *model.Column) string {
 	case "blob", "mediumblob", "longblob", "varbinary", "binary":
 		ft = "[]byte"
 	case "date", "time", "datetime", "timestamp":
-		ft = "time.Time"
-		pkg.AppendImport("time")
+		if column.IsNullable {
+			ft = "mysql.NullTime"
+			pkg.AppendImport("github.com/go-sql-driver/mysql")
+		} else {
+			ft = "time.Time"
+			pkg.AppendImport("time")
+		}
 	case "tinyint", "smallint":
 		if column.IsNullable {
 			ft = "sql.NullInt32"
@@ -102,7 +110,7 @@ func getModelFieldType(pkg *model.ModelPackage, column *model.Column) string {
 			ft = "float64"
 		}
 	case "bit":
-		ft = "bool"
+		ft = "[]byte" // sql/driver/Value does not supports bool
 	}
 	if ft == "" {
 		log.Printf("WARNING Incompatible Go type for column %s %s -> using string\r\n", column.ColumnName, column.ColumnType)

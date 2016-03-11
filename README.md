@@ -195,12 +195,18 @@ Here is a configuration example:
 	"BasePackage": "github.com/maxzerbini/prjtest",
 	"OutputPath": "$GOPATH/src/github.com/maxzerbini/prjtest",
 	"ExcludedEntities": [],
-	"Entities": []
+	"Entities": [],
+	"SkipDaoGeneration": false,
+	"SkipBizGeneration": false,
+	"SkipServiceGeneration": false
 }
 ```
 Optional configuration parameters
 - _ExcludedEntities_ is an optional list of enity names that will be exluded
 - _Entities_ is a list of included entities, if it's void all the entities are considered
+- _SkipDaoGeneration_ skip DAO generation step and the following steps
+- _SkipBizGeneration_ skip Biz generation step and the following steps
+- _SkipServiceGeneration_ skip Service Object generation step and the following steps
 
 ## Using generated DAO and Biz code
 It's very easy using generated code. Here an example:

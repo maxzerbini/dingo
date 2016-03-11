@@ -14,12 +14,14 @@ func ProduceViewModelPackage(config *model.Configuration, schema *model.Database
 		for _, column := range table.Columns {
 			field := &model.ViewModelField{FieldName: getModelFieldName(column.ColumnName), FieldType: getViewModelFieldType(pkg, column)}
 			if column.IsNullable {
-				if field.FieldType != "time.Time" { // exclude time fields
-					field.IsNullable = true
-				}
+				field.IsNullable = true
 			}
 			mt.Fields = append(mt.Fields, field)
+			if column.IsPrimaryKey {
+				mt.PKFields = append(mt.PKFields, field)
+			}
 		}
+		mt.IsSimplePK = checkSimplePK(pkg, mt)
 	}
 	for _, view := range schema.Views {
 		mt := &model.ViewModelType{TypeName: getModelTypeName(view.ViewName), PackageName: "viewmodel"}
@@ -27,9 +29,7 @@ func ProduceViewModelPackage(config *model.Configuration, schema *model.Database
 		for _, column := range view.Columns {
 			field := &model.ViewModelField{FieldName: getModelFieldName(column.ColumnName), FieldType: getViewModelFieldType(pkg, column)}
 			if column.IsNullable {
-				if field.FieldType != "time.Time" { // exclude time fields
-					field.IsNullable = true
-				}
+				field.IsNullable = true
 			}
 			mt.Fields = append(mt.Fields, field)
 		}
@@ -54,11 +54,38 @@ func getViewModelFieldType(pkg *model.ViewModelPackage, column *model.Column) st
 	case "float", "decimal", "double":
 		ft = "float64"
 	case "bit":
-		ft = "bool"
+		ft = "[]byte" // sql/driver/Value does not supports bool
 	}
 	if ft == "" {
 		log.Printf("WARNING Incompatible Go type for column %s %s -> using string\r\n", column.ColumnName, column.ColumnType)
 		ft = "string"
 	}
 	return ft
+}
+
+func checkSimplePK(pkg *model.ViewModelPackage, mt *model.ViewModelType) bool {
+	if len(mt.PKFields) == 1 {
+		switch mt.PKFields[0].FieldType {
+		case "string":
+			mt.PKStringConv = "ret := value"
+			mt.PKType = "string"
+			return true
+		case "int32":
+			mt.PKStringConv = "ret1, _ := strconv.ParseInt(value, 10, 32); ret := int32(ret1)"
+			pkg.AppendImport("strconv")
+			mt.PKType = "int32"
+			return true
+		case "int64":
+			mt.PKStringConv = "ret, _ := strconv.ParseInt(value, 10, 64)"
+			pkg.AppendImport("strconv")
+			mt.PKType = "int64"
+			return true
+		case "float64":
+			mt.PKStringConv = "ret, _ := strconv.ParseFloat(value, 64)"
+			pkg.AppendImport("strconv")
+			mt.PKType = "float64"
+			return true
+		}
+	}
+	return false
 }

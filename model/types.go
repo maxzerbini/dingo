@@ -39,9 +39,13 @@ type DaoType struct {
 }
 
 type ViewModelType struct {
-	PackageName string
-	TypeName    string
-	Fields      []*ViewModelField
+	PackageName  string
+	TypeName     string
+	Fields       []*ViewModelField
+	PKFields     []*ViewModelField
+	IsSimplePK   bool
+	PKType       string
+	PKStringConv string
 }
 
 type BizType struct {
@@ -61,6 +65,7 @@ type ServiceType struct {
 	Fields       []*BaseField
 	ViewModel    *ViewModelType
 	Biz          *BizType
+	IsSimplePK   bool
 }
 
 type ModelPackage struct {

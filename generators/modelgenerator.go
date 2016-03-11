@@ -52,6 +52,7 @@ func GenerateModel(config *model.Configuration, pkg *model.ModelPackage) {
 func generateCode(pkg interface{}, tpl string, wr io.Writer) {
 	tmpl, err := template.New("modelpackage").Parse(tpl)
 	if err != nil {
+		log.Println("Template parse failed")
 		panic(err)
 	}
 	err = tmpl.Execute(wr, pkg)

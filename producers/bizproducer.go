@@ -12,6 +12,9 @@ func ProduceBizPackage(config *model.Configuration, mpkg *model.ModelPackage, da
 	if mpkg.HasImport("database/sql") {
 		pkg.AppendImport("database/sql")
 	}
+	if mpkg.HasImport("github.com/go-sql-driver/mysql") {
+		pkg.AppendImport("github.com/go-sql-driver/mysql")
+	}
 	i := 0
 	for _, table := range mpkg.ModelTypes {
 		biz := &model.BizType{TypeName: mpkg.ModelTypes[i].TypeName + "Biz", PackageName: "biz"}
