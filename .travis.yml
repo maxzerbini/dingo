@@ -1,12 +1,20 @@
+dist: trusty
+sudo: required
+addons:
+  apt:
+    packages:
+    - mysql-server-5.6
+    - mysql-client-core-5.6
+    - mysql-client-5.6
+
 language: go
 
 go:
     - 1.6
-    - tip
 
 services:
     - mysql
 
 before_script:
-    - mysql -e 'create database customers;'
-    - mysql customers < $HOME/gopath/src/github.com/maxzerbini/dingo/test/database.sql
+    - mysql -u root -e 'create database customers;'
+    - mysql -u root customers < $HOME/gopath/src/github.com/maxzerbini/dingo/test/database.sql
