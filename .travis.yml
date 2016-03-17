@@ -5,7 +5,8 @@ go:
     - tip
 
 services:
-  - mysql
+    - mysql
 
 before_script:
-  - mysql -e 'create database customers;'
+    - mysql -e 'create database customers;'
+    - mysql customers < $HOME/gopath/src/github.com/maxzerbini/dingo/test/database.sql
