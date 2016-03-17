@@ -203,7 +203,8 @@ Here is a configuration example:
 	"Entities": [],
 	"SkipDaoGeneration": false,
 	"SkipBizGeneration": false,
-	"SkipServiceGeneration": false
+	"SkipServiceGeneration": false,
+	"ForcePluralResourceName": true
 }
 ```
 Optional configuration parameters
@@ -212,6 +213,7 @@ Optional configuration parameters
 - _SkipDaoGeneration_ skip DAO generation step and the following steps
 - _SkipBizGeneration_ skip Biz generation step and the following steps
 - _SkipServiceGeneration_ skip Service Object generation step and the following steps
+- _ForcePluralResourceName_ force english plural names for resource endpoints
 
 ## Using generated DAO and Biz code
 It's very easy using generated code. Here an example:
