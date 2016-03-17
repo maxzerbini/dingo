@@ -3,6 +3,9 @@ Data access in Go (DinGo). From database schema to RESTful API: all the code is 
 
 ![Dingo](doc/img/dingo_small.png)
 
+## Build status
+[![Build Status](https://drone.io/github.com/maxzerbini/dingo/status.png)](https://drone.io/github.com/maxzerbini/dingo/latest)
+
 ## Main features
 
 DinGo creates a Microservice application starting from your MySQL database schema. 
