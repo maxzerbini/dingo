@@ -11,7 +11,7 @@ import (
 var conf model.Configuration
 
 func init() {
-	conf = model.Configuration{Hostname: "localhost", Port: "3306", DatabaseName: "Customers", Username: "zerbo", Password: "Mysql.2016"}
+	conf = model.Configuration{Hostname: "localhost", Port: "3306", DatabaseName: "Customers", Username: "root", Password: ""}
 }
 
 func TestExploreDatabase(t *testing.T) {

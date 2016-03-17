@@ -10,7 +10,7 @@ import (
 var config *model.Configuration
 
 func init() {
-	config = &model.Configuration{Hostname: "localhost", Port: "3306", DatabaseName: "Customers", Username: "zerbo", Password: "Mysql.2016"}
+	config = &model.Configuration{Hostname: "localhost", Port: "3306", DatabaseName: "Customers", Username: "root", Password: ""}
 }
 
 func TestProduceModelPackage(t *testing.T) {
