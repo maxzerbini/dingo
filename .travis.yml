@@ -12,10 +12,12 @@ language: go
 go:
     - 1.6
 
+before_install:
+    - mkdir $HOME/gopath/src/github.com/maxzerbini/prjtest
+
 services:
     - mysql
 
 before_script:
     - mysql -u root -e 'create database customers;'
     - mysql -u root customers < $HOME/gopath/src/github.com/maxzerbini/dingo/test/database.sql
-	- mkdir $HOME/gopath/src/github.com/maxzerbini/prjtest
