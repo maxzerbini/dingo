@@ -42,6 +42,7 @@ func main() {
 				generators.GenerateService(&config, srvpkg)
 				generators.GenerateConfig(&config)
 				generators.GenerateMain(&config, srvpkg)
+				generators.GenerateCustomResources(&config)
 			}
 		}
 	}

@@ -4,6 +4,7 @@ import (
 	"strings"
 
 	"github.com/maxzerbini/dingo/model"
+	"github.com/maxzerbini/dingo/util"
 )
 
 func ProduceServicePackage(config *model.Configuration, viewpkg *model.ViewModelPackage, bizpkg *model.BizPackage) (pkg *model.ServicePackage) {
@@ -16,7 +17,11 @@ func ProduceServicePackage(config *model.Configuration, viewpkg *model.ViewModel
 		srv.Biz = biz
 		srv.ViewModel = biz.ViewModel
 		srv.IsSimplePK = biz.ViewModel.IsSimplePK
-		srv.ResourceName = strings.ToLower(biz.ViewModel.TypeName)
+		if config.ForcePluralResourceName {
+			srv.ResourceName = util.Pluralize(strings.ToLower(biz.ViewModel.TypeName))
+		} else {
+			srv.ResourceName = strings.ToLower(biz.ViewModel.TypeName)
+		}
 		srv.Fields = append(srv.Fields, &model.BaseField{FieldName: "Biz", FieldType: "*" + biz.PackageName + "." + biz.TypeName})
 		pkg.ServiceTypes = append(pkg.ServiceTypes, srv)
 	}

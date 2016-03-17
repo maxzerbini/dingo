@@ -10,5 +10,6 @@
 	"Entities": [],
 	"SkipDaoGeneration": false,
 	"SkipBizGeneration": false,
-	"SkipServiceGeneration": false
+	"SkipServiceGeneration": false,
+	"ForcePluralResourceName": true
 }

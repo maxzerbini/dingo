@@ -39,6 +39,7 @@ func main(){
 	router.Use(gin.Logger())
 	gin.SetMode(gin.DebugMode)
 	registerAPI(conf, router)
+	registerCustomResources(conf, router)
 	router.Run(conf.WebHost + ":" + conf.WebPort)
 }
 

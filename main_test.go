@@ -31,5 +31,6 @@ func TestGeneration(t *testing.T) {
 	generators.GenerateService(&config, srvpkg)
 	generators.GenerateConfig(&config)
 	generators.GenerateMain(&config, srvpkg)
+	generators.GenerateCustomResources(&config)
 	log.Printf("Code generation done.\r\n")
 }

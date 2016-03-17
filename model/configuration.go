@@ -9,18 +9,19 @@ import (
 )
 
 type Configuration struct {
-	Hostname              string
-	Port                  string
-	DatabaseName          string
-	Username              string
-	Password              string
-	BasePackage           string
-	OutputPath            string
-	ExcludedEntities      []string
-	Entities              []string
-	SkipDaoGeneration     bool
-	SkipBizGeneration     bool
-	SkipServiceGeneration bool
+	Hostname                string
+	Port                    string
+	DatabaseName            string
+	Username                string
+	Password                string
+	BasePackage             string
+	OutputPath              string
+	ExcludedEntities        []string
+	Entities                []string
+	SkipDaoGeneration       bool
+	SkipBizGeneration       bool
+	SkipServiceGeneration   bool
+	ForcePluralResourceName bool
 }
 
 func (conf *Configuration) IsExcluded(name string) bool {
