@@ -48,10 +48,12 @@ func (conf *Configuration) IsIncluded(name string) bool {
 func LoadConfiguration(path string) Configuration {
 	file, e := ioutil.ReadFile(path)
 	if e != nil {
-		log.Fatalf("Configuration file not found at %s", path)
+		log.Fatalf("Configuration file not found at path %s", path)
 	}
 	var jsontype Configuration
-	json.Unmarshal(file, &jsontype)
+	if e = json.Unmarshal(file, &jsontype); e != nil {
+		log.Fatalf("Invalid configuration file due to %s", e.Error())
+	}
 	jsontype.OutputPath = correctOutputPath(jsontype.OutputPath)
 	return jsontype
 }
