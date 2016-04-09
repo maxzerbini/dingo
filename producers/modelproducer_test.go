@@ -8,14 +8,16 @@ import (
 )
 
 var config *model.Configuration
+var exp explorer.DatabaseExplorer
 
 func init() {
 	config = &model.Configuration{Hostname: "localhost", Port: "3306", DatabaseName: "Customers", Username: "root", Password: ""}
+	exp = explorer.NewMySqlExplorer()
 }
 
 func TestProduceModelPackage(t *testing.T) {
 	t.Log("TestProduceModelPackage started")
-	schema := explorer.ExploreSchema(config)
+	schema := exp.ExploreSchema(config)
 	pkg := ProduceModelPackage(config, schema)
 
 	t.Logf("PackageName = %s", pkg.PackageName)
@@ -26,7 +28,7 @@ func TestProduceModelPackage(t *testing.T) {
 
 func TestProduceViewModelPackage(t *testing.T) {
 	t.Log("TestProduceViewModelPackage started")
-	schema := explorer.ExploreSchema(config)
+	schema := exp.ExploreSchema(config)
 	pkg := ProduceViewModelPackage(config, schema)
 
 	t.Logf("PackageName = %s", pkg.PackageName)
