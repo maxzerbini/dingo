@@ -286,7 +286,7 @@ It's recommended to test the generated code before using it in production.
 If you find a problem feel free to submit an issue.
 
 ## Roadmap
-# Supported Databases
+### Supported Databases
 - [x] MySQL 
 - [ ] PostgreSQL
 - [ ] SQLite
