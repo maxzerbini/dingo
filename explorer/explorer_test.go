@@ -14,7 +14,7 @@ func init() {
 	conf = model.Configuration{Hostname: "localhost", Port: "3306", DatabaseName: "Customers", Username: "root", Password: ""}
 }
 
-func TestExploreDatabase(t *testing.T) {
+func TestMySqlExploreDatabase(t *testing.T) {
 	t.Log("TestExploreDatabase started")
 	schema := ExploreSchema(&conf)
 	if schema.SchemaName == "" {

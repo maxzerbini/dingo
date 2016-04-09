@@ -11,6 +11,7 @@ import (
 type Configuration struct {
 	Hostname                string
 	Port                    string
+	DatabaseType            string
 	DatabaseName            string
 	Username                string
 	Password                string
@@ -54,6 +55,7 @@ func LoadConfiguration(path string) Configuration {
 	if e = json.Unmarshal(file, &jsontype); e != nil {
 		log.Fatalf("Invalid configuration file due to %s", e.Error())
 	}
+	jsontype.DatabaseType = checkDatabaseType(jsontype.DatabaseType)
 	jsontype.OutputPath = correctOutputPath(jsontype.OutputPath)
 	return jsontype
 }
@@ -63,4 +65,17 @@ func correctOutputPath(path string) string {
 	path = strings.Replace(path, "$GOPATH", gopath, -1)
 	path = strings.Replace(path, "%GOPATH%", gopath, -1)
 	return path
+}
+
+func checkDatabaseType(databaseType string) string {
+	db := strings.ToLower(databaseType)
+	switch db {
+	case "mysql":
+		return db
+	case "postgresql":
+		return db
+
+	}
+	log.Fatalf("Unknow DatabaseType %s", databaseType)
+	return ""
 }

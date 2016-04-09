@@ -2,26 +2,25 @@ package explorer
 
 import (
 	"database/sql"
+	"fmt"
 	"log"
 
-	_ "github.com/go-sql-driver/mysql"
+	_ "github.com/lib/pq"
 	"github.com/maxzerbini/dingo/model"
 )
 
-type DatabaseExplorer interface {
-	ExploreSchema(config *model.Configuration) (schema *model.DatabaseSchema)
+type PostgreSqlExplorer struct {
 }
 
-type MySqlExplorer struct {
-}
-
-func NewMySqlExplorer() *MySqlExplorer {
-	e := &MySqlExplorer{}
+func NewPostgreSqlExplorer() *PostgreSqlExplorer {
+	e := &PostgreSqlExplorer{}
 	return e
 }
 
-func (e *MySqlExplorer) ExploreSchema(config *model.Configuration) (schema *model.DatabaseSchema) {
-	conn, err := sql.Open("mysql", config.Username+":"+config.Password+"@tcp("+config.Hostname+":"+config.Port+")/information_schema?parseTime=true")
+func (e *PostgreSqlExplorer) ExploreSchema(config *model.Configuration) (schema *model.DatabaseSchema) {
+	connString := fmt.Sprintf("user='%s' password='%s' dbname=%s host=%s port=%s sslmode=disable",
+		config.Username, config.Password, "information_schema", config.Hostname, config.Port)
+	conn, err := sql.Open("postgres", connString)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -33,8 +32,8 @@ func (e *MySqlExplorer) ExploreSchema(config *model.Configuration) (schema *mode
 	return schema
 }
 
-func (e *MySqlExplorer) readTables(config *model.Configuration, conn *sql.DB, schema *model.DatabaseSchema) {
-	q := "SELECT TABLE_NAME FROM information_schema.TABLES Where TABLE_SCHEMA=? AND TABLE_TYPE='BASE TABLE' ORDER BY TABLE_NAME"
+func (e *PostgreSqlExplorer) readTables(config *model.Configuration, conn *sql.DB, schema *model.DatabaseSchema) {
+	q := "SELECT TABLE_NAME FROM information_schema.TABLES Where TABLE_SCHEMA=$1 AND TABLE_TYPE='BASE TABLE' ORDER BY TABLE_NAME"
 	rows, err := conn.Query(q, schema.SchemaName)
 	if err != nil {
 		log.Fatal(err)
@@ -62,8 +61,8 @@ func (e *MySqlExplorer) readTables(config *model.Configuration, conn *sql.DB, sc
 	}
 }
 
-func (e *MySqlExplorer) readViews(config *model.Configuration, conn *sql.DB, schema *model.DatabaseSchema) {
-	q := "SELECT TABLE_NAME FROM information_schema.VIEWS Where TABLE_SCHEMA=? ORDER BY TABLE_NAME"
+func (e *PostgreSqlExplorer) readViews(config *model.Configuration, conn *sql.DB, schema *model.DatabaseSchema) {
+	q := "SELECT TABLE_NAME FROM information_schema.VIEWS Where TABLE_SCHEMA=$1 ORDER BY TABLE_NAME"
 	rows, err := conn.Query(q, schema.SchemaName)
 	if err != nil {
 		log.Fatal(err)
@@ -84,10 +83,10 @@ func (e *MySqlExplorer) readViews(config *model.Configuration, conn *sql.DB, sch
 	}
 }
 
-func (e *MySqlExplorer) readColums(conn *sql.DB, schema *model.DatabaseSchema, tableName string, colums *[]*model.Column) {
+func (e *PostgreSqlExplorer) readColums(conn *sql.DB, schema *model.DatabaseSchema, tableName string, colums *[]*model.Column) {
 	q := "SELECT TABLE_NAME, COLUMN_NAME, IS_NULLABLE, DATA_TYPE, CHARACTER_MAXIMUM_LENGTH, NUMERIC_PRECISION, NUMERIC_SCALE, COLUMN_TYPE, COLUMN_KEY, EXTRA"
 	q += " FROM information_schema.COLUMNS "
-	q += " WHERE TABLE_SCHEMA=? AND TABLE_NAME=? ORDER BY ORDINAL_POSITION"
+	q += " WHERE TABLE_SCHEMA=$1 AND TABLE_NAME=$2 ORDER BY ORDINAL_POSITION"
 	rows, err := conn.Query(q, schema.SchemaName, tableName)
 	if err != nil {
 		log.Fatal(err)

@@ -1,6 +1,7 @@
 {
 	"Hostname": "localhost", 
-	"Port": "3306", 
+	"Port": "3306",
+	"DatabaseType": "MySQL", 
 	"DatabaseName": "Customers", 
 	"Username": "zerbo", 
 	"Password": "Mysql.2016",

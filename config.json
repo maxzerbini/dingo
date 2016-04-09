@@ -1,6 +1,7 @@
 {
 	"Hostname": "localhost", 
 	"Port": "3306", 
+	"DatabaseType": "MySQL",
 	"DatabaseName": "Customers", 
 	"Username": "root", 
 	"Password": "",

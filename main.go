@@ -26,7 +26,8 @@ func main() {
 	log.Printf("DinGo Code Generator\r\n")
 	log.Printf("Processing configuration file %s\r\n", configPath)
 	config := model.LoadConfiguration(configPath)
-	schema := explorer.ExploreSchema(&config)
+	exp := createExplorer(&config)
+	schema := exp.ExploreSchema(&config)
 	modelpkg := producers.ProduceModelPackage(&config, schema)
 	daopkg := producers.ProduceDaoPackage(&config, schema, modelpkg)
 	viewmodelpkg := producers.ProduceViewModelPackage(&config, schema)
@@ -47,4 +48,13 @@ func main() {
 		}
 	}
 	log.Printf("Code generation done.\r\n")
+}
+
+func createExplorer(conf *model.Configuration) explorer.DatabaseExplorer {
+	switch conf.DatabaseType {
+	case "mysql":
+		return explorer.NewMySqlExplorer()
+	default:
+		return explorer.NewMySqlExplorer()
+	}
 }

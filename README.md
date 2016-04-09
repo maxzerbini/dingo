@@ -284,3 +284,10 @@ The file *customresources.go* is generated only once then is no longer rewritten
 ## Warning
 It's recommended to test the generated code before using it in production. 
 If you find a problem feel free to submit an issue.
+
+## Roadmap
+# Supported Databases
+- [x] MySQL 
+- [ ] PostgreSQL
+- [ ] SQLite
+- [ ] MS SQL Server
