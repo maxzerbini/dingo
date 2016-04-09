@@ -16,7 +16,8 @@ func init() {
 
 func TestMySqlExploreDatabase(t *testing.T) {
 	t.Log("TestExploreDatabase started")
-	schema := ExploreSchema(&conf)
+	exp := NewMySqlExplorer()
+	schema := exp.ExploreSchema(&conf)
 	if schema.SchemaName == "" {
 		t.Fatalf("Test faile due to %s", "schema not found")
 	}
