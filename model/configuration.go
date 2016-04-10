@@ -23,6 +23,7 @@ type Configuration struct {
 	SkipBizGeneration       bool
 	SkipServiceGeneration   bool
 	ForcePluralResourceName bool
+	PostgresSchema          string
 }
 
 func (conf *Configuration) IsExcluded(name string) bool {
@@ -73,6 +74,8 @@ func checkDatabaseType(databaseType string) string {
 	case "mysql":
 		return db
 	case "postgresql":
+		return "postgres"
+	case "postgres":
 		return db
 
 	}

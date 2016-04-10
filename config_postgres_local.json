@@ -1,0 +1,17 @@
+{
+	"Hostname": "localhost", 
+	"Port": "5432",
+	"DatabaseType": "Postgres", 
+	"DatabaseName": "Customers", 
+	"Username": "postgres", 
+	"Password": "postgres.2016",
+	"BasePackage": "github.com/maxzerbini/prjtestPostgres",
+	"OutputPath": "$GOPATH/src/github.com/maxzerbini/prjtestPostgres",
+	"ExcludedEntities": [],
+	"Entities": [],
+	"SkipDaoGeneration": true,
+	"SkipBizGeneration": false,
+	"SkipServiceGeneration": false,
+	"ForcePluralResourceName": true,
+	"PostgresSchema": "public"
+}
