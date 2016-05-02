@@ -96,7 +96,7 @@ func (e *MySqlExplorer) readColums(conn *sql.DB, schema *model.DatabaseSchema, t
 		column := &model.Column{}
 		nullable := "NO"
 		columnKey, extra := "", ""
-		err := rows.Scan(&column.ColumnName, &column.ColumnName, &nullable, &column.DataType, &column.CharacterMaximumLength, &column.NumericPrecision, &column.NumericScale, &column.ColumnType, &columnKey, &extra)
+		err := rows.Scan(&column.TableName, &column.ColumnName, &nullable, &column.DataType, &column.CharacterMaximumLength, &column.NumericPrecision, &column.NumericScale, &column.ColumnType, &columnKey, &extra)
 		if err != nil {
 			log.Fatal(err)
 		}

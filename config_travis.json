@@ -1,0 +1,16 @@
+{
+	"Hostname": "localhost", 
+	"Port": "3306", 
+	"DatabaseType": "MySQL",
+	"DatabaseName": "Customers", 
+	"Username": "root", 
+	"Password": "",
+	"BasePackage": "github.com/maxzerbini/prjtest",
+	"OutputPath": "$GOPATH/src/github.com/maxzerbini/prjtest",
+	"ExcludedEntities": [],
+	"Entities": [],
+	"SkipDaoGeneration": false,
+	"SkipBizGeneration": false,
+	"SkipServiceGeneration": false,
+	"ForcePluralResourceName": true
+}

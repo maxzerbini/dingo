@@ -23,6 +23,7 @@ type View struct {
 }
 
 type Column struct {
+	TableName              string
 	ColumnName             string
 	IsPrimaryKey           bool
 	IsNullable             bool

@@ -1,3 +1,6 @@
+// +build mysql
+// +build !postgres
+
 package generators
 
 import (

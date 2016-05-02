@@ -14,7 +14,7 @@ func ProduceModelPackage(config *model.Configuration, schema *model.DatabaseSche
 		mt := &model.ModelType{TypeName: getModelTypeName(table.TableName), PackageName: "model"}
 		pkg.ModelTypes = append(pkg.ModelTypes, mt)
 		for _, column := range table.Columns {
-			field := &model.ModelField{FieldName: getModelFieldName(column.ColumnName), FieldType: getModelFieldType(pkg, column), FieldMetadata: getFieldMetadata(pkg, column)}
+			field := &model.ModelField{FieldName: getModelFieldName(column.ColumnName), FieldType: getModelFieldType(config.DatabaseType, pkg, column), FieldMetadata: getFieldMetadata(pkg, column)}
 			if column.IsPrimaryKey {
 				field.IsPK = true
 				mt.PKFields = append(mt.PKFields, field)
@@ -40,7 +40,7 @@ func ProduceModelPackage(config *model.Configuration, schema *model.DatabaseSche
 		mt := &model.ModelType{TypeName: getModelTypeName(view.ViewName), PackageName: "model"}
 		pkg.ViewModelTypes = append(pkg.ViewModelTypes, mt)
 		for _, column := range view.Columns {
-			field := &model.ModelField{FieldName: getModelFieldName(column.ColumnName), FieldType: getModelFieldType(pkg, column), FieldMetadata: getFieldMetadata(pkg, column)}
+			field := &model.ModelField{FieldName: getModelFieldName(column.ColumnName), FieldType: getModelFieldType(config.DatabaseType, pkg, column), FieldMetadata: getFieldMetadata(pkg, column)}
 			if column.IsNullable {
 				if field.FieldType != "time.Time" { // exclude time fields
 					field.IsNullable = true
@@ -68,7 +68,19 @@ func getModelFieldName(fieldname string) string {
 	return name
 }
 
-func getModelFieldType(pkg *model.ModelPackage, column *model.Column) string {
+func getModelFieldType(databaseType string, pkg *model.ModelPackage, column *model.Column) string {
+	switch databaseType {
+	case "mysql":
+		return getMySQLModelFieldType(pkg, column)
+	case "postgres":
+		return getPostgresModelFieldType(pkg, column)
+	default:
+		return getMySQLModelFieldType(pkg, column)
+	}
+
+}
+
+func getMySQLModelFieldType(pkg *model.ModelPackage, column *model.Column) string {
 	var ft string = ""
 	switch column.DataType {
 	case "char", "varchar", "enum", "text", "longtext", "mediumtext", "tinytext":
@@ -111,6 +123,57 @@ func getModelFieldType(pkg *model.ModelPackage, column *model.Column) string {
 		}
 	case "bit":
 		ft = "[]byte" // sql/driver/Value does not supports bool
+	}
+	if ft == "" {
+		log.Printf("WARNING Incompatible Go type for column %s %s -> using string\r\n", column.ColumnName, column.ColumnType)
+		ft = "string"
+	}
+	return ft
+}
+
+func getPostgresModelFieldType(pkg *model.ModelPackage, column *model.Column) string {
+	var ft string = ""
+	switch column.ColumnType {
+	case "char", "varchar", "text", "character":
+		if column.IsNullable {
+			ft = "sql.NullString"
+			pkg.AppendImport("database/sql")
+		} else {
+			ft = "string"
+		}
+	case "bytea":
+		ft = "[]byte"
+	case "date", "time", "timetz", "timestamptz", "timestamp", "interval":
+		if column.IsNullable {
+			ft = "pq.NullTime"
+			pkg.AppendImport("github.com/lib/pq")
+		} else {
+			ft = "time.Time"
+			pkg.AppendImport("time")
+		}
+	case "int2", "int4":
+		if column.IsNullable {
+			ft = "sql.NullInt32"
+			pkg.AppendImport("database/sql")
+		} else {
+			ft = "int32"
+		}
+	case "int8":
+		if column.IsNullable {
+			ft = "sql.NullInt64"
+			pkg.AppendImport("database/sql")
+		} else {
+			ft = "int64"
+		}
+	case "float4", "float8", "numeric":
+		if column.IsNullable {
+			ft = "sql.NullFloat64"
+			pkg.AppendImport("database/sql")
+		} else {
+			ft = "float64"
+		}
+	case "bit", "bool":
+		ft = "bool" // pq supports bool
 	}
 	if ft == "" {
 		log.Printf("WARNING Incompatible Go type for column %s %s -> using string\r\n", column.ColumnName, column.ColumnType)

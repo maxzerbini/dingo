@@ -1,3 +1,6 @@
+// +build mysql
+// +build !postgres
+
 package explorer
 
 import (
@@ -19,7 +22,7 @@ func TestMySqlExploreDatabase(t *testing.T) {
 	exp := NewMySqlExplorer()
 	schema := exp.ExploreSchema(&conf)
 	if schema.SchemaName == "" {
-		t.Fatalf("Test faile due to %s", "schema not found")
+		t.Errorf("Test faile due to %s", "schema not found")
 	}
 	for _, t := range schema.Tables {
 		fmt.Printf("Table %+v\r\n", *t)

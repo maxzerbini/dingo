@@ -85,9 +85,10 @@ func (e *PostgreSqlExplorer) readViews(config *model.Configuration, conn *sql.DB
 }
 
 func (e *PostgreSqlExplorer) readColums(config *model.Configuration, conn *sql.DB, schema *model.DatabaseSchema, tableName string, colums *[]*model.Column) {
-	q := "SELECT TABLE_NAME, COLUMN_NAME, IS_NULLABLE, DATA_TYPE, CHARACTER_MAXIMUM_LENGTH, NUMERIC_PRECISION, NUMERIC_SCALE, UDT_NAME, COLUMN_DEFAULT"
-	q += " FROM information_schema.COLUMNS "
-	q += " WHERE TABLE_CATALOG=$1 AND TABLE_SCHEMA=$2 AND TABLE_NAME=$3 ORDER BY ORDINAL_POSITION"
+	q := "SELECT c.TABLE_NAME, c.COLUMN_NAME, c.IS_NULLABLE, c.DATA_TYPE, c.CHARACTER_MAXIMUM_LENGTH,c.NUMERIC_PRECISION, c.NUMERIC_SCALE, c.UDT_NAME, c.COLUMN_DEFAULT, kc.CONSTRAINT_NAME"
+	q += " FROM information_schema.COLUMNS c"
+	q += " LEFT JOIN information_schema.KEY_COLUMN_USAGE kc ON kc.TABLE_CATALOG = c.TABLE_CATALOG AND kc.TABLE_SCHEMA = c.TABLE_SCHEMA AND kc.TABLE_NAME = c.TABLE_NAME AND kc.COLUMN_NAME = c.COLUMN_NAME"
+	q += " WHERE c.TABLE_CATALOG=$1 AND c.TABLE_SCHEMA=$2 AND c.TABLE_NAME=$3 ORDER BY c.ORDINAL_POSITION"
 	rows, err := conn.Query(q, config.DatabaseName, schema.SchemaName, tableName)
 	if err != nil {
 		log.Fatal(err)
@@ -95,8 +96,8 @@ func (e *PostgreSqlExplorer) readColums(config *model.Configuration, conn *sql.D
 	for rows.Next() {
 		column := &model.Column{}
 		nullable := "NO"
-		var extra sql.NullString
-		err := rows.Scan(&column.ColumnName, &column.ColumnName, &nullable, &column.DataType, &column.CharacterMaximumLength, &column.NumericPrecision, &column.NumericScale, &column.ColumnType, &extra)
+		var extra, primary sql.NullString
+		err := rows.Scan(&column.TableName, &column.ColumnName, &nullable, &column.DataType, &column.CharacterMaximumLength, &column.NumericPrecision, &column.NumericScale, &column.ColumnType, &extra, &primary)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -106,8 +107,11 @@ func (e *PostgreSqlExplorer) readColums(config *model.Configuration, conn *sql.D
 		} else {
 			column.IsNullable = true
 		}
-		if extra.Valid && strings.HasPrefix("nextval", extra.String) {
+		if extra.Valid && strings.HasPrefix(extra.String, "nextval") {
 			column.IsAutoIncrement = true
+		}
+		if primary.Valid {
+			column.IsPrimaryKey = true
 		}
 		*colums = append(*colums, column)
 	}

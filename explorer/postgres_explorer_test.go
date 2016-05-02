@@ -1,3 +1,6 @@
+// +build postgres
+// +build !mysql
+
 package explorer
 
 import (
@@ -10,9 +13,9 @@ import (
 
 func TestPostgresExploreDatabase(t *testing.T) {
 	t.Log("TestExploreDatabase started")
-	conf = model.LoadConfiguration("../config_postgres_local.json")
+	confPostgres := model.LoadConfiguration("../config_postgres_local.json")
 	exp := NewPostgreSqlExplorer()
-	schema := exp.ExploreSchema(&conf)
+	schema := exp.ExploreSchema(&confPostgres)
 	if schema.SchemaName == "" {
 		t.Fatalf("Test faile due to %s", "schema not found")
 	}

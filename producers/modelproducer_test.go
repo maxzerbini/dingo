@@ -1,3 +1,6 @@
+// +build mysql
+// +build !postgres
+
 package producers
 
 import (
@@ -7,18 +10,18 @@ import (
 	"github.com/maxzerbini/dingo/model"
 )
 
-var config *model.Configuration
+var config model.Configuration
 var exp explorer.DatabaseExplorer
 
 func init() {
-	config = &model.Configuration{Hostname: "localhost", Port: "3306", DatabaseName: "Customers", Username: "root", Password: ""}
+	config = model.LoadConfiguration("../config.json")
 	exp = explorer.NewMySqlExplorer()
 }
 
 func TestProduceModelPackage(t *testing.T) {
 	t.Log("TestProduceModelPackage started")
-	schema := exp.ExploreSchema(config)
-	pkg := ProduceModelPackage(config, schema)
+	schema := exp.ExploreSchema(&config)
+	pkg := ProduceModelPackage(&config, schema)
 
 	t.Logf("PackageName = %s", pkg.PackageName)
 	for _, mt := range pkg.ModelTypes {
@@ -28,8 +31,8 @@ func TestProduceModelPackage(t *testing.T) {
 
 func TestProduceViewModelPackage(t *testing.T) {
 	t.Log("TestProduceViewModelPackage started")
-	schema := exp.ExploreSchema(config)
-	pkg := ProduceViewModelPackage(config, schema)
+	schema := exp.ExploreSchema(&config)
+	pkg := ProduceViewModelPackage(&config, schema)
 
 	t.Logf("PackageName = %s", pkg.PackageName)
 	for _, mt := range pkg.ViewModelTypes {

@@ -12,6 +12,8 @@ language: go
 go:
     - 1.6
 
+gobuild_args: -v -tags "mysql"
+
 before_install:
     - mkdir $HOME/gopath/src/github.com/maxzerbini/prjtest
 
