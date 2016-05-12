@@ -19,6 +19,9 @@ var (
 )
 
 func GenerateMain(config *model.Configuration, pkg *model.ServicePackage) {
+	if config.DatabaseType == "postgres" {
+		MainTemplate = "./templates/postgres_main.tpl"
+	}
 	// load template
 	file, err := ioutil.ReadFile(MainTemplate)
 	if err != nil {

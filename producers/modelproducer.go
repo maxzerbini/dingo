@@ -25,12 +25,15 @@ func ProduceModelPackage(config *model.Configuration, schema *model.DatabaseSche
 				field.IsAutoInc = true
 			}
 			if column.IsNullable {
-				if field.FieldType != "mysql.NullTime" { // exclude time fields
-					field.IsNullable = true
-					field.NullableFieldType = field.FieldType[8:] // scorporate sql.Null
-				} else {
+				if field.FieldType == "mysql.NullTime" {
 					field.IsNullable = true
 					field.NullableFieldType = field.FieldType[10:] // scorporate mysql.Null
+				} else if field.FieldType == "pq.NullTime" {
+					field.IsNullable = true
+					field.NullableFieldType = field.FieldType[7:] // scorporate pq.Null
+				} else {
+					field.IsNullable = true
+					field.NullableFieldType = field.FieldType[8:] // scorporate sql.Null
 				}
 			}
 			mt.Fields = append(mt.Fields, field)
@@ -125,7 +128,7 @@ func getMySQLModelFieldType(pkg *model.ModelPackage, column *model.Column) strin
 		ft = "[]byte" // sql/driver/Value does not supports bool
 	}
 	if ft == "" {
-		log.Printf("WARNING Incompatible Go type for column %s %s -> using string\r\n", column.ColumnName, column.ColumnType)
+		log.Printf("WARNING Incompatible Go type for MySQL column %s %s -> using string\r\n", column.ColumnName, column.ColumnType)
 		ft = "string"
 	}
 	return ft
@@ -176,7 +179,7 @@ func getPostgresModelFieldType(pkg *model.ModelPackage, column *model.Column) st
 		ft = "bool" // pq supports bool
 	}
 	if ft == "" {
-		log.Printf("WARNING Incompatible Go type for column %s %s -> using string\r\n", column.ColumnName, column.ColumnType)
+		log.Printf("WARNING Incompatible Go type for Postgres column %s %s -> using string\r\n", column.ColumnName, column.ColumnType)
 		ft = "string"
 	}
 	return ft

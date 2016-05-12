@@ -28,3 +28,14 @@ func TestPostgresProduceModelPackage(t *testing.T) {
 		t.Logf("ModelType = %s", mt.TypeName)
 	}
 }
+
+func TestPostgresProduceViewModelPackage(t *testing.T) {
+	t.Log("TestPostgresProduceViewModelPackage started")
+	schema := expPostgres.ExploreSchema(&configPostgres)
+	pkg := ProduceViewModelPackage(&configPostgres, schema)
+
+	t.Logf("PackageName = %s", pkg.PackageName)
+	for _, mt := range pkg.ViewModelTypes {
+		t.Logf("ModelType = %s", mt.TypeName)
+	}
+}

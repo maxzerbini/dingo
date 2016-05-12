@@ -12,7 +12,7 @@ func ProduceViewModelPackage(config *model.Configuration, schema *model.Database
 		mt := &model.ViewModelType{TypeName: getModelTypeName(table.TableName), PackageName: "viewmodel"}
 		pkg.ViewModelTypes = append(pkg.ViewModelTypes, mt)
 		for _, column := range table.Columns {
-			field := &model.ViewModelField{FieldName: getModelFieldName(column.ColumnName), FieldType: getViewModelFieldType(pkg, column)}
+			field := &model.ViewModelField{FieldName: getModelFieldName(column.ColumnName), FieldType: getViewModelFieldType(config.DatabaseType, pkg, column)}
 			if column.IsNullable {
 				field.IsNullable = true
 			}
@@ -27,7 +27,7 @@ func ProduceViewModelPackage(config *model.Configuration, schema *model.Database
 		mt := &model.ViewModelType{TypeName: getModelTypeName(view.ViewName), PackageName: "viewmodel"}
 		pkg.ViewModelTypes = append(pkg.ViewModelTypes, mt)
 		for _, column := range view.Columns {
-			field := &model.ViewModelField{FieldName: getModelFieldName(column.ColumnName), FieldType: getViewModelFieldType(pkg, column)}
+			field := &model.ViewModelField{FieldName: getModelFieldName(column.ColumnName), FieldType: getViewModelFieldType(config.DatabaseType, pkg, column)}
 			if column.IsNullable {
 				field.IsNullable = true
 			}
@@ -37,7 +37,18 @@ func ProduceViewModelPackage(config *model.Configuration, schema *model.Database
 	return pkg
 }
 
-func getViewModelFieldType(pkg *model.ViewModelPackage, column *model.Column) string {
+func getViewModelFieldType(databaseType string, pkg *model.ViewModelPackage, column *model.Column) string {
+	switch databaseType {
+	case "mysql":
+		return getMySQLViewModelFieldType(pkg, column)
+	case "postgres":
+		return getPostgresViewModelFieldType(pkg, column)
+	default:
+		return getMySQLViewModelFieldType(pkg, column)
+	}
+}
+
+func getMySQLViewModelFieldType(pkg *model.ViewModelPackage, column *model.Column) string {
 	var ft string = ""
 	switch column.DataType {
 	case "char", "varchar", "enum", "text", "longtext", "mediumtext", "tinytext":
@@ -57,7 +68,33 @@ func getViewModelFieldType(pkg *model.ViewModelPackage, column *model.Column) st
 		ft = "[]byte" // sql/driver/Value does not supports bool
 	}
 	if ft == "" {
-		log.Printf("WARNING Incompatible Go type for column %s %s -> using string\r\n", column.ColumnName, column.ColumnType)
+		log.Printf("WARNING Incompatible Go type for MySQL column %s %s -> using string\r\n", column.ColumnName, column.ColumnType)
+		ft = "string"
+	}
+	return ft
+}
+
+func getPostgresViewModelFieldType(pkg *model.ViewModelPackage, column *model.Column) string {
+	var ft string = ""
+	switch column.ColumnType {
+	case "char", "varchar", "text", "character":
+		ft = "string"
+	case "bytea":
+		ft = "[]byte"
+	case "date", "time", "timetz", "timestamptz", "timestamp", "interval":
+		ft = "time.Time"
+		pkg.AppendImport("time")
+	case "int2", "int4":
+		ft = "int32"
+	case "int8":
+		ft = "int64"
+	case "float4", "float8", "numeric":
+		ft = "float64"
+	case "bit", "bool":
+		ft = "bool" // sql/driver/Value does not supports bool
+	}
+	if ft == "" {
+		log.Printf("WARNING Incompatible Go type for Postgres column %s %s -> using string\r\n", column.ColumnName, column.ColumnType)
 		ft = "string"
 	}
 	return ft

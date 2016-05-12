@@ -1,5 +1,9 @@
 package model
 
+import (
+	"strconv"
+)
+
 type BaseField struct {
 	FieldName string
 	FieldType string
@@ -30,12 +34,13 @@ type ModelType struct {
 }
 
 type DaoType struct {
-	PackageName string
-	TypeName    string
-	Fields      []*BaseField
-	Model       *ModelType
-	Entity      *Table
-	View        *View
+	PackageName        string
+	TypeName           string
+	Fields             []*BaseField
+	Model              *ModelType
+	Entity             *Table
+	View               *View
+	HasAutoIncrementPK bool
 }
 
 type ViewModelType struct {
@@ -182,4 +187,12 @@ func (pkg *ServicePackage) AppendImport(pkgName string) bool {
 	}
 	pkg.ImportPackages = append(pkg.ImportPackages, pkgName)
 	return true
+}
+
+func (mf ModelField) GetPostgresParam(i int) string {
+	return "$" + strconv.Itoa(i+1)
+}
+
+func (mf ModelField) GetPostgresParamFrom(i int, s int) string {
+	return "$" + strconv.Itoa(s+i+1)
 }

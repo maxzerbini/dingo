@@ -54,6 +54,8 @@ func createExplorer(conf *model.Configuration) explorer.DatabaseExplorer {
 	switch conf.DatabaseType {
 	case "mysql":
 		return explorer.NewMySqlExplorer()
+	case "postgres":
+		return explorer.NewPostgreSqlExplorer()
 	default:
 		return explorer.NewMySqlExplorer()
 	}

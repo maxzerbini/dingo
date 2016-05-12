@@ -9,7 +9,7 @@
 	"OutputPath": "$GOPATH/src/github.com/maxzerbini/prjtestPostgres",
 	"ExcludedEntities": [],
 	"Entities": [],
-	"SkipDaoGeneration": true,
+	"SkipDaoGeneration": false,
 	"SkipBizGeneration": false,
 	"SkipServiceGeneration": false,
 	"ForcePluralResourceName": true,

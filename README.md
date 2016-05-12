@@ -8,7 +8,8 @@ Data access in Go (DinGo). From database schema to RESTful API: all the code is 
 
 ## Main features
 
-DinGo creates a Microservice application starting from your MySQL database schema. 
+DinGo creates a Microservice application starting from your database schema. 
+Supported databases are MySQL and PostgreSQL (still in beta).
 
 These are the main steps followed by Dingo:
 - Data Model generation
@@ -22,10 +23,10 @@ These are the main steps followed by Dingo:
 The result you get is a Web API application that you just compile and run.
 
 ## Model Generation
-DinGo generates Model Data Transfer Object (DTO) reading the MySql database schema.
+DinGo generates Model Data Transfer Object (DTO) reading the database schema.
 All the generated strutcs are written in the *model.go* file inside the *model* package's directory.
 
-This is an example of generated DTO:
+This is an example of generated DTO for MySql:
 ```Go
 // Data transfer object for Customer
 type Customer struct {
@@ -40,7 +41,7 @@ type Customer struct {
 Every field has a *GORM style* metadata.
 
 ## DAO Generation
-DinGo generates DAO structs reading the MySql database schema and the Model.
+DinGo generates DAO structs reading the database schema and the Model.
 Every DAO defines these methods to perform CRUD operations on entities:
 - Insert(conn *sql.DB, dto *model.ModelStruct)(lastInsertId int64, err error)
 - Update(conn *sql.DB, dto *model.ModelStruct)(rowsAffected int64, err error)
@@ -52,7 +53,7 @@ Every DAO defines these methods to perform CRUD operations on entities:
 Generated DAO supports table's primary keys and auto-increment columns.
 All the DAO generated structs are written in the *dao.go* file inside the *dao* package's directory.
 
-This is an example of generated DAO struct:
+This is an example of generated DAO struct for MySql:
 ```Go
 // Data access object for Customer entities.
 type CustomerDao struct {
@@ -207,7 +208,8 @@ Here is a configuration example:
 	"SkipDaoGeneration": false,
 	"SkipBizGeneration": false,
 	"SkipServiceGeneration": false,
-	"ForcePluralResourceName": true
+	"ForcePluralResourceName": true,
+	"PostgresSchema": "public"
 }
 ```
 Optional configuration parameters
@@ -217,6 +219,7 @@ Optional configuration parameters
 - _SkipBizGeneration_ skip Biz generation step and the following steps
 - _SkipServiceGeneration_ skip Service Object generation step and the following steps
 - _ForcePluralResourceName_ force english plural names for resource endpoints
+- _PostgresSchema_ is the PostgreSQL Schema name (usually "public")
 
 ## Using generated DAO and Biz code
 It's very easy using generated code. Here an example:
@@ -288,6 +291,6 @@ If you find a problem feel free to submit an issue.
 ## Roadmap
 ### Supported Databases
 - [x] MySQL 
-- [ ] PostgreSQL
+- [x] PostgreSQL (beta)
 - [ ] SQLite
 - [ ] MS SQL Server

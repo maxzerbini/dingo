@@ -19,6 +19,9 @@ var (
 )
 
 func GenerateDao(config *model.Configuration, pkg *model.DaoPackage) {
+	if config.DatabaseType == "postgres" {
+		DaoTemplate = "./templates/postgres_dao.tpl"
+	}
 	// load template
 	file, err := ioutil.ReadFile(DaoTemplate)
 	if err != nil {

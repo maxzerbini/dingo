@@ -14,6 +14,9 @@ func ProduceDaoPackage(config *model.Configuration, schema *model.DatabaseSchema
 		dao.Model = mpkg.ModelTypes[i]
 		dao.Entity = table
 		pkg.DaoTypes = append(pkg.DaoTypes, dao)
+		if CheckAutoIncrementPK(table) {
+			dao.HasAutoIncrementPK = true
+		}
 		i++
 	}
 	i = 0
@@ -25,4 +28,13 @@ func ProduceDaoPackage(config *model.Configuration, schema *model.DatabaseSchema
 		i++
 	}
 	return pkg
+}
+
+func CheckAutoIncrementPK(table *model.Table) bool {
+	if len(table.PrimaryKeys) == 1 {
+		if table.PrimaryKeys[0].IsAutoIncrement == true {
+			return true
+		}
+	}
+	return false
 }
