@@ -278,11 +278,11 @@ func registerCustomResources(conf Configuration, router *gin.Engine) {
 The file *customresources.go* is generated only once then is no longer rewritten so that it can be modified without the risk of losing changes.
 
 ## Known issues
-- The DAO components are produced correctly if the tables have a PK
+- The DAO components are produced correctly if the tables have a PK and at least one column
 - Some columns types that are not recognized (such as JSON) are mapped to string fields
 - DinGo maps DATE, TIME, DATETIME and TIMESTAMP column types to *time.Time* assuming that the connection has opened using the DSN parameter *parseTime=true*
 - If you have a lot of entities in your database, you could produce a *"SOA Monolith"*, but using the configuration parameters _ExcludedEntities_ or _Entities_ and changing the _BasePackage_ you can limit the number of endpoints and you can produce many small applications, obtaining a set of indipendent Microservices
-- Some HTTP verbs such as DELETE are not used defining the service endpoints of the resources that have complex primery keys
+- Some HTTP verbs such as DELETE are not used defining the service endpoints of the resources that have complex primary keys
 
 ## Warning
 It's recommended to test the generated code before using it in production. 
