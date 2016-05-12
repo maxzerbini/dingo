@@ -2,6 +2,7 @@ package producers
 
 import (
 	"bytes"
+	"database/sql"
 	"log"
 	"strings"
 
@@ -105,7 +106,7 @@ func getMySQLModelFieldType(pkg *model.ModelPackage, column *model.Column) strin
 		}
 	case "tinyint", "smallint":
 		if column.IsNullable {
-			ft = "sql.NullInt32"
+			ft = "sql.NullInt64"
 			pkg.AppendImport("database/sql")
 		} else {
 			ft = "int32"

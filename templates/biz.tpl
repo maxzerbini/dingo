@@ -3,15 +3,15 @@ package {{.PackageName}}
 {{range .ImportPackages}}import "{{.}}"
 {{end}}{{end}}
 {{range .BizTypes}}
-// Business object for {{.Model.TypeName}} entities.
+// {{.TypeName}} is a business object for {{.Model.TypeName}} entities.
 type {{.TypeName}} struct {
 	{{range .Fields}}{{.FieldName}} {{.FieldType}}{{end}}
 }
-//Create a {{.TypeName}}
+// Create a new {{.TypeName}}
 func New{{.TypeName}}() *{{.TypeName}} {
 	return &{{.TypeName}}{ Dao:&{{.Dao.PackageName}}.{{.Dao.TypeName}}{} }
 }
-// Convert an model entity in a view-model
+// Convert a model entity in a view-model
 func (b *{{.TypeName}}) ToViewModel(m *{{.Model.PackageName}}.{{.Model.TypeName}}) *{{.ViewModel.PackageName}}.{{.ViewModel.TypeName}}{
 	v := &{{.ViewModel.PackageName}}.{{.ViewModel.TypeName}}{}
 	{{range .Model.Fields}}{{if .IsNullable}}if m.{{.FieldName}}.Valid { v.{{.FieldName}} = m.{{.FieldName}}.{{.NullableFieldType}} }{{else}}v.{{.FieldName}} = m.{{.FieldName}}{{end}}
