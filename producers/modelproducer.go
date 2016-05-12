@@ -2,7 +2,6 @@ package producers
 
 import (
 	"bytes"
-	"database/sql"
 	"log"
 	"strings"
 
