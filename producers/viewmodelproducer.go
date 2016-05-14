@@ -59,7 +59,7 @@ func getMySQLViewModelFieldType(pkg *model.ViewModelPackage, column *model.Colum
 		ft = "time.Time"
 		pkg.AppendImport("time")
 	case "tinyint", "smallint":
-		ft = "int32"
+		ft = "int64"
 	case "int", "mediumint", "bigint":
 		ft = "int64"
 	case "float", "decimal", "double":
@@ -85,7 +85,7 @@ func getPostgresViewModelFieldType(pkg *model.ViewModelPackage, column *model.Co
 		ft = "time.Time"
 		pkg.AppendImport("time")
 	case "int2", "int4":
-		ft = "int32"
+		ft = "int64"
 	case "int8":
 		ft = "int64"
 	case "float4", "float8", "numeric":

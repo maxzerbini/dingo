@@ -108,7 +108,7 @@ func getMySQLModelFieldType(pkg *model.ModelPackage, column *model.Column) strin
 			ft = "sql.NullInt64"
 			pkg.AppendImport("database/sql")
 		} else {
-			ft = "int32"
+			ft = "int64"
 		}
 	case "int", "mediumint", "bigint":
 		if column.IsNullable {
@@ -156,10 +156,10 @@ func getPostgresModelFieldType(pkg *model.ModelPackage, column *model.Column) st
 		}
 	case "int2", "int4":
 		if column.IsNullable {
-			ft = "sql.NullInt32"
+			ft = "sql.NullInt64"
 			pkg.AppendImport("database/sql")
 		} else {
-			ft = "int32"
+			ft = "int64"
 		}
 	case "int8":
 		if column.IsNullable {
