@@ -216,6 +216,7 @@ Here is a configuration example:
 The _DatabaseType_ can assume one of these values
 - "MySQL"
 - "Postgres"
+
 Optional configuration parameters
 - _ExcludedEntities_ is an optional list of enity names that will be exluded
 - _Entities_ is a list of included entities, if it's void all the entities are considered
