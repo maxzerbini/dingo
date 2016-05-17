@@ -108,6 +108,13 @@ LOCK TABLES `product` WRITE;
 /*!40000 ALTER TABLE `product` ENABLE KEYS */;
 UNLOCK TABLES;
 
+DROP TABLE IF EXISTS `customerorder`;
+CREATE TABLE `customerorder` (
+  `IdCustomer` int(10) unsigned NOT NULL,
+  `OrderCode` varchar(45) NOT NULL,
+  PRIMARY KEY (`IdCustomer`,`OrderCode`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 --
 -- Final view structure for view `customerdetails`
 --

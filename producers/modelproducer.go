@@ -94,6 +94,7 @@ func getMySQLModelFieldType(pkg *model.ModelPackage, column *model.Column) strin
 			ft = "string"
 		}
 	case "blob", "mediumblob", "longblob", "varbinary", "binary":
+		column.IsNullable = false // nullable column of this type is not managed
 		ft = "[]byte"
 	case "date", "time", "datetime", "timestamp":
 		if column.IsNullable {
@@ -125,11 +126,17 @@ func getMySQLModelFieldType(pkg *model.ModelPackage, column *model.Column) strin
 			ft = "float64"
 		}
 	case "bit":
-		ft = "[]byte" // sql/driver/Value does not supports bool
+		column.IsNullable = false // nullable column of this type is not managed
+		ft = "[]byte"             // sql/driver/Value does not supports bool
 	}
 	if ft == "" {
 		log.Printf("WARNING Incompatible Go type for MySQL column %s %s -> using string\r\n", column.ColumnName, column.ColumnType)
-		ft = "string"
+		if column.IsNullable {
+			ft = "sql.NullString"
+			pkg.AppendImport("database/sql")
+		} else {
+			ft = "string"
+		}
 	}
 	return ft
 }
@@ -145,6 +152,7 @@ func getPostgresModelFieldType(pkg *model.ModelPackage, column *model.Column) st
 			ft = "string"
 		}
 	case "bytea":
+		column.IsNullable = false // nullable column of this type is not managed
 		ft = "[]byte"
 	case "date", "time", "timetz", "timestamptz", "timestamp", "interval":
 		if column.IsNullable {
@@ -176,11 +184,17 @@ func getPostgresModelFieldType(pkg *model.ModelPackage, column *model.Column) st
 			ft = "float64"
 		}
 	case "bit", "bool":
-		ft = "bool" // pq supports bool
+		column.IsNullable = false // nullable column of this type is not managed
+		ft = "string"             // seems that lib/pq does not supports bool ?
 	}
 	if ft == "" {
 		log.Printf("WARNING Incompatible Go type for Postgres column %s %s -> using string\r\n", column.ColumnName, column.ColumnType)
-		ft = "string"
+		if column.IsNullable {
+			ft = "sql.NullString"
+			pkg.AppendImport("database/sql")
+		} else {
+			ft = "string"
+		}
 	}
 	return ft
 }

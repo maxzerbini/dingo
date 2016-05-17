@@ -91,7 +91,7 @@ func getPostgresViewModelFieldType(pkg *model.ViewModelPackage, column *model.Co
 	case "float4", "float8", "numeric":
 		ft = "float64"
 	case "bit", "bool":
-		ft = "bool" // sql/driver/Value does not supports bool
+		ft = "string" // seems that lib/pq does not supports bool ?
 	}
 	if ft == "" {
 		log.Printf("WARNING Incompatible Go type for Postgres column %s %s -> using string\r\n", column.ColumnName, column.ColumnType)

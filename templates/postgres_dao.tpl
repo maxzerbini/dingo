@@ -33,6 +33,7 @@ func (dao *{{.TypeName}}) Insert(conn *sql.DB, dto *{{.Model.PackageName}}.{{.Mo
 	}
 	return 0, err
 }{{end}}
+{{if len .Entity.OtherColumns}}
 // Update a {{.Model.TypeName}} entity and returns the number of affected rows.
 func (dao *{{.TypeName}}) Update(conn *sql.DB, dto *{{.Model.PackageName}}.{{.Model.TypeName}})(rowsAffected int64, err error) {
 	q := "UPDATE \"{{.Entity.TableName}}\" SET {{range $i, $e := .Entity.OtherColumns}}{{if $i}}, {{end}}\"{{.ColumnName}}\"={{.GetPostgresParam $i}}{{end}}"
@@ -43,7 +44,12 @@ func (dao *{{.TypeName}}) Update(conn *sql.DB, dto *{{.Model.PackageName}}.{{.Mo
 	}
 	rowsAffected, err = res.RowsAffected()
 	return rowsAffected, err
-}
+}{{else}}
+// Update a {{.Model.TypeName}} entity and returns the number of affected rows.
+func (dao *{{.TypeName}}) Update(conn *sql.DB, dto *{{.Model.PackageName}}.{{.Model.TypeName}})(rowsAffected int64, err error) {
+	// Not implemented because the entity does not have at least one column not PK
+	return 0, nil
+}{{end}}
 // Delete a {{.Model.TypeName}} entity and returns the number of affected rows.
 func (dao *{{.TypeName}}) Delete(conn *sql.DB, dto *{{.Model.PackageName}}.{{.Model.TypeName}})(rowsAffected int64, err error) {
 	q := "DELETE FROM \"{{.Entity.TableName}}\""
