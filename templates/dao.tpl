@@ -54,6 +54,7 @@ func (dao *{{.TypeName}}) Delete(conn *sql.DB, dto *{{.Model.PackageName}}.{{.Mo
 func (dao *{{.TypeName}}) FindByPrimaryKey(conn *sql.DB, {{range $i, $e := .Model.PKFields}}{{if $i}}, {{end}}{{.FieldName}} {{.FieldType}}{{end}}) (dto *{{.Model.PackageName}}.{{.Model.TypeName}}, err error) {
 	q := "SELECT {{range $i, $e := .Entity.Columns}}{{if $i}}, {{end}}{{.ColumnName}}{{end}} FROM {{.Entity.TableName}} WHERE {{range $i, $e := .Entity.PrimaryKeys}}{{if $i}} AND {{end}}{{.ColumnName}} = ?{{end}}"
 	rows, err := conn.Query(q, {{range $i, $e := .Model.PKFields}}{{if $i}}, {{end}}{{.FieldName}}{{end}})
+	defer rows.Close()
 	if err != nil {
 		return nil, err
 	}
@@ -72,6 +73,7 @@ func (dao *{{.TypeName}}) FindByPrimaryKey(conn *sql.DB, {{range $i, $e := .Mode
 func (dao *{{.TypeName}}) List(conn *sql.DB, take int, skip int) (list []*{{.Model.PackageName}}.{{.Model.TypeName}}, err error) {
 	q := "SELECT {{range $i, $e := .Entity.Columns}}{{if $i}}, {{end}}{{.ColumnName}}{{end}} FROM {{.Entity.TableName}} LIMIT ? OFFSET ?"
 	rows, err := conn.Query(q, take, skip)
+	defer rows.Close()
 	if err != nil {
 		return nil, err
 	}
@@ -89,6 +91,7 @@ func (dao *{{.TypeName}}) List(conn *sql.DB, take int, skip int) (list []*{{.Mod
 func (dao *{{.TypeName}}) Count(conn *sql.DB) (count int64, err error){
 	q := "SELECT count(*) FROM {{.Entity.TableName}}"
 	rows, err := conn.Query(q)
+	defer rows.Close()
 	if err != nil {
 		return 0, err
 	}
@@ -113,6 +116,7 @@ type {{.TypeName}} struct {
 func (dao *{{.TypeName}}) List(conn *sql.DB, take int, skip int) (list []*{{.Model.PackageName}}.{{.Model.TypeName}}, err error){
 	q := "SELECT {{range $i, $e := .View.Columns}}{{if $i}}, {{end}}{{.ColumnName}}{{end}} FROM {{.View.ViewName}} LIMIT ? OFFSET ?"
 	rows, err := conn.Query(q, take, skip)
+	defer rows.Close()
 	if err != nil {
 		return nil, err
 	}
@@ -130,6 +134,7 @@ func (dao *{{.TypeName}}) List(conn *sql.DB, take int, skip int) (list []*{{.Mod
 func (dao *{{.TypeName}}) Count(conn *sql.DB) (count int64, err error){
 	q := "SELECT count(*) FROM {{.View.ViewName}}"
 	rows, err := conn.Query(q)
+	defer rows.Close()
 	if err != nil {
 		return 0, err
 	}
