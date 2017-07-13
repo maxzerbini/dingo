@@ -68,6 +68,7 @@ func (dao *{{.TypeName}}) FindByPrimaryKey(conn *sql.DB, {{range $i, $e := .Mode
 	if err != nil {
 		return nil, err
 	}
+	defer rows.Close()
 	if rows.Next() {
 		dto = &{{.Model.PackageName}}.{{.Model.TypeName}}{}
 		err := rows.Scan({{range $i, $e := .Model.Fields}}{{if $i}}, {{end}}&dto.{{.FieldName}}{{end}})
@@ -86,6 +87,7 @@ func (dao *{{.TypeName}}) List(conn *sql.DB, take int, skip int) (list []*{{.Mod
 	if err != nil {
 		return nil, err
 	}
+	defer rows.Close()
 	for rows.Next() {
 		dto := &{{.Model.PackageName}}.{{.Model.TypeName}}{}
 		err := rows.Scan({{range $i, $e := .Model.Fields}}{{if $i}}, {{end}}&dto.{{.FieldName}}{{end}})
@@ -103,6 +105,7 @@ func (dao *{{.TypeName}}) Count(conn *sql.DB) (count int64, err error){
 	if err != nil {
 		return 0, err
 	}
+	defer rows.Close()
 	if rows.Next() {
 		err := rows.Scan(&count)
 		if err != nil {
@@ -127,6 +130,7 @@ func (dao *{{.TypeName}}) List(conn *sql.DB, take int, skip int) (list []*{{.Mod
 	if err != nil {
 		return nil, err
 	}
+	defer rows.Close()
 	for rows.Next() {
 		dto := &{{.Model.PackageName}}.{{.Model.TypeName}}{}
 		err := rows.Scan({{range $i, $e := .Model.Fields}}{{if $i}}, {{end}}&dto.{{.FieldName}}{{end}})
@@ -144,6 +148,7 @@ func (dao *{{.TypeName}}) Count(conn *sql.DB) (count int64, err error){
 	if err != nil {
 		return 0, err
 	}
+	defer rows.Close()
 	if rows.Next() {
 		err := rows.Scan(&count)
 		if err != nil {
